@@ -1,25 +1,61 @@
 package com.netcracker.edu.dao;
 
 import com.netcracker.edu.bobjects.Passenger;
-import com.netcracker.edu.persist.InMemoryStorageManager;
+import com.netcracker.edu.persist.InMemoryStorage;
 
-import java.util.Set;
+import java.io.*;
 
 /**
  * Created by Zhassulan on 23.10.2015.
  */
 public class DAObject {
-    public Passenger findPassenger(String passportNumber,String citizenship){
-        Set<Passenger> passengers= InMemoryStorageManager.getInstance().getStorage().getPassengers();
-        for (Passenger it:passengers) {
-            if(passportNumber.equals(it.getPassportNumber())&&citizenship.equals(it.getCitizenship())){
+    private static DAObject instance;
+    private static InMemoryStorage storage;
+
+    private DAObject() {
+        {
+            try {
+                File file = new File("InMemoryStorage.out");
+                if (file.exists()) {
+                    FileInputStream fis = new FileInputStream(file);
+                    ObjectInputStream oin = new ObjectInputStream(fis);
+                    storage = (InMemoryStorage) oin.readObject();
+                } else {
+                    storage = new InMemoryStorage();
+                }
+            } catch (ClassNotFoundException | IOException fnfe) {
+                fnfe.printStackTrace();
+            }
+        }
+    }
+
+    public static synchronized DAObject getInstance() {
+        if (instance == null) {
+            instance = new DAObject();
+        }
+        return instance;
+    }
+
+    public Passenger findPassenger(String passportNumber, String citizenship) {
+        for (Passenger it : storage.getPassengers()) {
+            if (passportNumber.equals(it.getPassportNumber()) && citizenship.equals(it.getCitizenship())) {
                 return it;
             }
         }
         return null;
     }
-    public void addPassenger(Passenger passenger){
-        InMemoryStorageManager storage=InMemoryStorageManager.getInstance();
-        storage.getStorage().getPassengers().add(passenger);
+
+    public void addPassenger(Passenger passenger) {
+        storage.getPassengers().add(passenger);
+        try {
+            FileOutputStream fos = new FileOutputStream("InMemoryStorage.out");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(storage);
+            oos.flush();
+            oos.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 }

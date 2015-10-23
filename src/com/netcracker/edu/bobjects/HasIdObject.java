@@ -8,6 +8,9 @@ import java.math.BigInteger;
 public abstract class HasIdObject {
     private BigInteger id;
 
+    //needed this constructor for child serialization
+    protected HasIdObject(){
+    }
     public HasIdObject(BigInteger id) {
         setId(id);
     }

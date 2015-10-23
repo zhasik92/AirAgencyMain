@@ -17,7 +17,9 @@ public class Passenger extends HasIdObject implements Serializable {
     private Date dateOfBirth;
     private String passportNumber;
     private String citizenship;
-
+    private Passenger(){
+        super();
+    }
     public Passenger(BigInteger id, String passportNumber, String citizenship) {
         super(id);
         setPassportNumber(passportNumber);
