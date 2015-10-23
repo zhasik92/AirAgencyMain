@@ -29,7 +29,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setFrom(City from) {
         if (from == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         this.from = from;
     }
@@ -40,7 +40,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setTo(City to) {
         if (to == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         this.to = to;
     }
@@ -51,7 +51,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setDepartureTime(Time departureTime) {
         if (departureTime == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         this.departureTime = departureTime;
     }
@@ -62,7 +62,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setArrivalTime(Time arrivalTime) {
         if (arrivalTime == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         this.arrivalTime = arrivalTime;
     }
@@ -73,7 +73,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setAirplane(Airplane airplane) {
         if (airplane == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         this.airplane = airplane;
     }

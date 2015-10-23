@@ -1,7 +1,7 @@
 package com.netcracker.edu.dao;
 
 import com.netcracker.edu.bobjects.Passenger;
-import com.netcracker.edu.persist.InMemoryStorage;
+import com.netcracker.edu.persist.InMemoryStorageManager;
 
 import java.util.Set;
 
@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class DAObject {
     public Passenger findPassenger(String passportNumber,String citizenship){
-        Set<Passenger> passengers=InMemoryStorage.getPassengers();
+        Set<Passenger> passengers= InMemoryStorageManager.getInstance().getStorage().getPassengers();
         for (Passenger it:passengers) {
             if(passportNumber.equals(it.getPassportNumber())&&citizenship.equals(it.getCitizenship())){
                 return it;
@@ -18,7 +18,8 @@ public class DAObject {
         }
         return null;
     }
-    public void persist(Passenger passenger){
-        InMemoryStorage.getPassengers().add(passenger);
+    public void addPassenger(Passenger passenger){
+        InMemoryStorageManager storage=InMemoryStorageManager.getInstance();
+        storage.getStorage().getPassengers().add(passenger);
     }
 }

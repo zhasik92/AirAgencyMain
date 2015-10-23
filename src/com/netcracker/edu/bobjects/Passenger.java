@@ -1,6 +1,7 @@
 package com.netcracker.edu.bobjects;
 
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.util.regex.Matcher;
@@ -9,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Zhassulan on 20.10.2015.
  */
-public class Passenger extends HasIdObject {
+public class Passenger extends HasIdObject implements Serializable {
     private String email;
     private String firstName;
     private String secondName;

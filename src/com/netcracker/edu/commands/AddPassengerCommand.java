@@ -36,7 +36,7 @@ public class AddPassengerCommand extends AbstractCommand {
         System.out.println("email(not nessecary):");
         String email = br.readLine();
         passenger = new Passenger(IdGenerator.getInstance().getId(), email,firstName,lastName,dateOfBirth, passportNumber, citizenship);
-        dao.persist(passenger);
+        dao.addPassenger(passenger);
         return 0;
     }
 }

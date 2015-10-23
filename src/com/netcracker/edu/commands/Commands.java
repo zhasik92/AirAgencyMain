@@ -13,7 +13,6 @@ public final class Commands implements Serializable {
     public static HashMap<String,String> getAllCommands(){
         if(map==null){
             map=new HashMap<>();
-            map.put("hello", "com.netcracker.edu.commands.HelloWorldCommand");
             map.put("addpassenger","com.netcracker.edu.commands.AddPassengerCommand");
             map.put("exit","com.netcracker.edu.commands.ExitCommand");
         }
