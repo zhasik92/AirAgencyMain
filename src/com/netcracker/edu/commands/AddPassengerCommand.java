@@ -19,8 +19,10 @@ public class AddPassengerCommand extends AbstractCommand {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Please enter passport number:");
         String passportNumber = br.readLine();
+
         System.out.println("Citizenship:");
         String citizenship = br.readLine();
+
         DAObject dao =DAObject.getInstance();
         Passenger passenger = dao.findPassenger(passportNumber, citizenship);
         if (passenger != null) {
@@ -29,12 +31,16 @@ public class AddPassengerCommand extends AbstractCommand {
         }
         System.out.println("first name:");
         String firstName = br.readLine();
+
         System.out.println("last name:");
         String lastName = br.readLine();
+
         System.out.println("date of birth(yyyy-[m]m-[d]d):");
         Date dateOfBirth = Date.valueOf(br.readLine());
+
         System.out.println("email(not nessecary):");
         String email = br.readLine();
+
         passenger = new Passenger(IdGenerator.getInstance().getId(), email,firstName,lastName,dateOfBirth, passportNumber, citizenship);
         dao.addPassenger(passenger);
         return 0;

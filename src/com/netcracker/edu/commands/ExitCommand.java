@@ -1,6 +1,8 @@
 package com.netcracker.edu.commands;
 
-import java.io.IOException;
+import com.netcracker.edu.util.IdGenerator;
+
+import java.io.*;
 
 /**
  * Created by Zhassulan on 23.10.2015.
@@ -13,6 +15,9 @@ public class ExitCommand extends AbstractCommand {
         //oos.writeObject();
        // oos.flush();
         //oos.close();
+        BufferedWriter br=new BufferedWriter(new OutputStreamWriter(new FileOutputStream("UtilData.out")));
+        br.write(IdGenerator.getInstance().getId().intValue()+"\n");
+        br.close();
         System.exit(0);
         return 0;
     }
