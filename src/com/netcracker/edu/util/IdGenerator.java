@@ -16,8 +16,8 @@ public class IdGenerator {
             if (file.exists()) {
                 try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
                     idCounter = BigInteger.valueOf(Long.parseLong(br.readLine()));
-                } catch (IOException fnfe) {
-                    fnfe.printStackTrace();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
                 } catch (NumberFormatException nfe) {
                     idCounter = BigInteger.ZERO;
                 }

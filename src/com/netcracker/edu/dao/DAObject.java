@@ -4,6 +4,7 @@ import com.netcracker.edu.bobjects.Passenger;
 import com.netcracker.edu.persist.InMemoryStorage;
 
 import java.io.*;
+import java.util.Collection;
 
 /**
  * Created by Zhassulan on 23.10.2015.
@@ -45,7 +46,7 @@ public class DAObject {
         return null;
     }
 
-    public void addPassenger(Passenger passenger) {
+    public synchronized void addPassenger(Passenger passenger) {
         storage.getPassengers().add(passenger);
         try {
             FileOutputStream fos = new FileOutputStream("InMemoryStorage.out");
@@ -57,5 +58,10 @@ public class DAObject {
             e.printStackTrace();
         }
 
+    }
+    //нужно либо удалить этот метод либо возвращать копию коллекции,
+    // чтобы избежать изменени€ хранилища напр€мую. ѕозже исправлю
+    public  Collection<Passenger> getAllPassengers(){
+        return storage.getPassengers();
     }
 }
