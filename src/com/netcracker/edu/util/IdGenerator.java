@@ -12,14 +12,12 @@ public class IdGenerator {
 
     private IdGenerator() {
         {
-            File file = new File("UtilData.out");
+            File file = new File("idGen.out");
             if (file.exists()) {
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
-                    idCounter = BigInteger.valueOf(Long.parseLong(br.readLine()));
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                } catch (NumberFormatException nfe) {
-                    idCounter = BigInteger.ZERO;
+                try (FileInputStream fis = new FileInputStream(file); ObjectInputStream oin = new ObjectInputStream(fis)) {
+                    idCounter = (BigInteger) oin.readObject();
+                } catch (ClassNotFoundException | IOException e) {
+                    e.printStackTrace();
                 }
             } else {
                 idCounter = BigInteger.ZERO;
@@ -37,7 +35,6 @@ public class IdGenerator {
 
     public synchronized BigInteger getId() {
         idCounter = idCounter.add(BigInteger.ONE);
-        System.out.println(idCounter.intValue());
         return idCounter;
     }
 }

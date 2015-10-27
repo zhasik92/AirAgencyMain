@@ -21,6 +21,7 @@ public class DAObject {
                     FileInputStream fis = new FileInputStream(file);
                     ObjectInputStream oin = new ObjectInputStream(fis);
                     storage = (InMemoryStorage) oin.readObject();
+                    oin.close();
                 } else {
                     storage = new InMemoryStorage();
                 }
@@ -37,7 +38,7 @@ public class DAObject {
         return instance;
     }
 
-    public Passenger findPassenger(String passportNumber, String citizenship) {
+    public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
         for (Passenger it : storage.getPassengers()) {
             if (passportNumber.equals(it.getPassportNumber()) && citizenship.equals(it.getCitizenship())) {
                 return it;

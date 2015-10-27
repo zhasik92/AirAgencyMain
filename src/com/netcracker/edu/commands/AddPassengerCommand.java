@@ -24,7 +24,7 @@ public class AddPassengerCommand extends AbstractCommand {
         String citizenship = br.readLine();
 
         DAObject dao =DAObject.getInstance();
-        Passenger passenger = dao.findPassenger(passportNumber, citizenship);
+        Passenger passenger = dao.findPassengerByPassportNumberAndCitizenship(passportNumber, citizenship);
         if (passenger != null) {
             System.out.println("passenger already exist");
             return 0;

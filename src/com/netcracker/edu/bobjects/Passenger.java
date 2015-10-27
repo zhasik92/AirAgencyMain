@@ -13,41 +13,40 @@ import java.util.regex.Pattern;
 public class Passenger extends HasIdObject implements Serializable {
     private String email;
     private String firstName;
-    private String secondName;
+    private String lastName;
     private Date dateOfBirth;
     private String passportNumber;
     private String citizenship;
-    private Passenger(){
-        super();
-    }
+
     public Passenger(BigInteger id, String passportNumber, String citizenship) {
         super(id);
         setPassportNumber(passportNumber);
         setCitizenship(citizenship);
     }
 
-    // i'll refactor this latter, cause it's bad practise to put to constructor a lot of fields.
-    public Passenger(BigInteger id, String email, String firstName, String secondName, Date dateOfBirth, String passportNumber, String citizenship) {
+    // i'll refactor this latter, builder pattern is better
+    public Passenger(BigInteger id, String email, String firstName, String lastName, Date dateOfBirth, String passportNumber, String citizenship) {
         super(id);
-        this.email = email;
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.dateOfBirth = dateOfBirth;
-        this.passportNumber = passportNumber;
-        this.citizenship = citizenship;
+        setEmail(email);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setDateOfBirth(dateOfBirth);
+        setPassportNumber(passportNumber);
+        setCitizenship(citizenship);
     }
 
     public String getEmail() {
         return email;
     }
 
+    //i'll fix regex later
     public void setEmail(String email) {
         Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\\\+]+(\\\\.[_A-Za-z0-9-]+)*@\"\n" +
                 "\t\t+ \"[A-Za-z0-9-]+(\\\\.[A-Za-z0-9]+)*(\\\\.[A-Za-z]{2,})$");
         Matcher matcher = pattern.matcher(email);
-        if (!matcher.matches()) {
+       /* if (!matcher.matches()) {
             throw new IllegalArgumentException();
-        }
+        }*/
         this.email = email;
     }
 
@@ -59,12 +58,12 @@ public class Passenger extends HasIdObject implements Serializable {
         this.firstName = firstName;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Date getDateOfBirth() {
@@ -80,7 +79,7 @@ public class Passenger extends HasIdObject implements Serializable {
     }
 
     public void setPassportNumber(String passportNumber) {
-        Pattern pattern = Pattern.compile("^[A-Za-z]+[0-9]*$");
+        Pattern pattern = Pattern.compile("^[A-Za-z]?[0-9]*$");
         Matcher matcher = pattern.matcher(passportNumber);
         if (!matcher.matches()) {
             throw new IllegalArgumentException();

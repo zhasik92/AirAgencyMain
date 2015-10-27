@@ -1,25 +1,23 @@
 package com.netcracker.edu.bobjects;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 /**
  * Created by Zhassulan on 20.10.2015.
  */
-public abstract class HasIdObject {
+public abstract class HasIdObject implements Serializable {
     private BigInteger id;
 
-    //needed this constructor for child serialization
-    protected HasIdObject(){
-    }
     public HasIdObject(BigInteger id) {
         setId(id);
     }
 
-    private void setId(BigInteger id){
-        if(id.compareTo(BigInteger.ZERO)<0){
+    private void setId(BigInteger id) {
+        if (id.compareTo(BigInteger.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
-        this.id=id;
+        this.id = id;
     }
 
     public BigInteger getId() {

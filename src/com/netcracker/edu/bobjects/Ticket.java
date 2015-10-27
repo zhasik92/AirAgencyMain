@@ -37,7 +37,7 @@ public class Ticket extends HasIdObject implements Serializable {
 
     public void setPassenger(Passenger passenger) {
         if (passenger == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         this.passenger = passenger;
     }
@@ -48,7 +48,7 @@ public class Ticket extends HasIdObject implements Serializable {
 
     public void setFlight(Flight flight) {
         if (flight == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
         this.flight = flight;
     }
