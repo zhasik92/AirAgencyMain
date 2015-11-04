@@ -15,6 +15,11 @@ import java.sql.Date;
 public class AddPassengerCommand extends AbstractCommand {
 
     @Override
+    public String getName() {
+        return "addpassenger";
+    }
+
+    @Override
     public int execute(String[] parameters) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Please enter passport number:");

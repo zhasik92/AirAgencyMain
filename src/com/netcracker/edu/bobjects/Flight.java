@@ -8,37 +8,39 @@ import java.sql.Time;
  * Created by Zhassulan on 20.10.2015.
  */
 public class Flight extends HasIdObject implements Serializable{
-    private City from;
-    private City to;
+    private String from;
+    private String to;
     private Time departureTime;
     private Time arrivalTime;
-    private Airplane airplane;
+    private String airplane;
+    private double price;
 
-    public Flight(BigInteger id, City from, City to, Time departureTime, Time arrivalTime, Airplane airplane) {
+    public Flight(BigInteger id, String from, String to, Time departureTime, Time arrivalTime, String airplane,double price) {
         super(id);
-        setFrom(from);
-        setTo(to);
+        setDepartureAirportName(from);
+        setArrivalAirportName(to);
         setDepartureTime(departureTime);
         setArrivalTime(arrivalTime);
         setAirplane(airplane);
+        setPrice(price);
     }
 
-    public City getFrom() {
+    public String getDepartureAirportName() {
         return from;
     }
 
-    public void setFrom(City from) {
+    public void setDepartureAirportName(String from) {
         if (from == null) {
             throw new IllegalArgumentException();
         }
         this.from = from;
     }
 
-    public City getTo() {
+    public String getArrivalAirportName() {
         return to;
     }
 
-    public void setTo(City to) {
+    public void setArrivalAirportName(String to) {
         if (to == null) {
             throw new IllegalArgumentException();
         }
@@ -67,14 +69,25 @@ public class Flight extends HasIdObject implements Serializable{
         this.arrivalTime = arrivalTime;
     }
 
-    public Airplane getAirplane() {
+    public String getAirplaneName() {
         return airplane;
     }
 
-    public void setAirplane(Airplane airplane) {
+    public void setAirplane(String airplane) {
         if (airplane == null) {
             throw new IllegalArgumentException();
         }
         this.airplane = airplane;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        if(price<0){
+            throw new IllegalArgumentException();
+        }
+        this.price = price;
     }
 }

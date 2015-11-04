@@ -1,5 +1,7 @@
 package com.netcracker.edu.commands;
 
+import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.persist.InMemoryStorage;
 import com.netcracker.edu.util.IdGenerator;
 
 import java.io.FileOutputStream;
@@ -12,14 +14,30 @@ import java.math.BigInteger;
  */
 public class ExitCommand extends AbstractCommand {
     @Override
+    public String getName() {
+        return "exit";
+    }
+
+    @Override
     public int execute(String[] parameters) throws IOException {
-        BigInteger id= IdGenerator.getInstance().getId();
-        FileOutputStream fos = new FileOutputStream("idGen.out");
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(id);
-        oos.flush();
-        oos.close();
-        System.exit(0);
+        try {
+            InMemoryStorage storage=DAObject.getInstance().getStorage();
+            FileOutputStream fos = new FileOutputStream("InMemoryStorage.out");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(storage);
+            oos.flush();
+            oos.close();
+
+            BigInteger id = IdGenerator.getInstance().getId();
+            fos = new FileOutputStream("idGen.out");
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(id);
+            oos.flush();
+            oos.close();
+            System.exit(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 }

@@ -7,53 +7,40 @@ import java.math.BigInteger;
  * Created by Zhassulan on 20.10.2015.
  */
 public class Ticket extends HasIdObject implements Serializable {
-    private double price;
-    private Passenger passenger;
-    private Flight flight;
+    private BigInteger passenger;
+    private BigInteger flight;
     private boolean status;
 
-    public Ticket(BigInteger id, Passenger passenger, double price, Flight flight, boolean status) {
+    public Ticket(BigInteger id, BigInteger passenger, BigInteger flight, boolean status) {
         super(id);
-        setPassenger(passenger);
-        setPrice(price);
-        setFlight(flight);
+        setPassengerId(passenger);
+        setFlightId(flight);
         this.status = status;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        if (price < 0) {
-            throw new IllegalArgumentException();
-        }
-        this.price = price;
-    }
-
-    public Passenger getPassenger() {
+    public BigInteger getPassengerId() {
         return passenger;
     }
 
-    public void setPassenger(Passenger passenger) {
+    public void setPassengerId(BigInteger passenger) {
         if (passenger == null) {
             throw new IllegalArgumentException();
         }
         this.passenger = passenger;
     }
 
-    public Flight getFlight() {
+    public BigInteger getFlightId() {
         return flight;
     }
 
-    public void setFlight(Flight flight) {
+    public void setFlightId(BigInteger flight) {
         if (flight == null) {
             throw new IllegalArgumentException();
         }
         this.flight = flight;
     }
 
-    public boolean isStatus() {
+    public boolean isCanceled() {
         return status;
     }
 
