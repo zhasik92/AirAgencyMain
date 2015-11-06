@@ -25,7 +25,7 @@ public class AddAirplaneCommand extends AbstractCommand {
         DAObject dao = DAObject.getInstance();
         Airplane airplane = dao.findAirplaneByName(airplaneName);
         if (airplane != null) {
-            System.out.println("City already exist");
+            System.out.println("Airplane already exist");
             return 0;
         }
         System.out.println("Write capacity:");

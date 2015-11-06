@@ -1,7 +1,6 @@
 package com.netcracker.edu.commands;
 
 
-import com.netcracker.edu.bobjects.Passenger;
 import com.netcracker.edu.dao.DAObject;
 
 import java.io.IOException;
@@ -21,9 +20,10 @@ public class ViewCommand extends AbstractCommand {
     @Override
     public int execute(String[] parameters) throws IOException {
         DAObject dao=DAObject.getInstance();
-        for (Passenger it: dao.getAllPassengers()) {
-            System.out.println(it);
-        }
+        dao.getAllPassengers().forEach(System.out::println);
+        dao.getAllCities().forEach(System.out::println);
+        dao.getAllFlights().forEach(System.out::println);
+        dao.getAllAirplanes().forEach(System.out::println);
         return 0;
     }
 }

@@ -21,11 +21,21 @@ public class AddFlightCommand extends AbstractCommand {
     @Override
     public int execute(String[] parameters) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        DAObject dao=DAObject.getInstance();
+
         System.out.println("From:");
         String from = br.readLine();
+        if(dao.findCityByName(from)==null){
+            System.out.println("City is not found");
+            return 1;
+        }
 
         System.out.println("To:");
         String to=br.readLine();
+        if(dao.findCityByName(to)==null){
+            System.out.println("City is not found");
+            return 1;
+        }
 
         System.out.println("Departure time(hh:mm:ss):");
         Time departureTime=Time.valueOf(br.readLine());
@@ -35,11 +45,9 @@ public class AddFlightCommand extends AbstractCommand {
 
         System.out.println("Write Airplane type:");
         String airplane=br.readLine();
-
-        DAObject dao=DAObject.getInstance();
         if (dao.findAirplaneByName(airplane)==null) {
             System.out.println("No such airplane type");
-            return 0;
+            return 1;
         }
 
         System.out.println("Set price:");

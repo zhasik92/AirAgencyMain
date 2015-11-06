@@ -39,30 +39,57 @@ public class DAObject {
         return instance;
     }
 
-    public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
-        for (Passenger it : storage.getPassengers()) {
-            if (passportNumber.equals(it.getPassportNumber()) && citizenship.equals(it.getCitizenship())) {
-                return it;
-            }
-        }
-        return null;
+    public InMemoryStorage getStorage() {
+        return storage;
     }
 
-    public Passenger findPassengerById(BigInteger id){
-        for(Passenger it: storage.getPassengers()){
-            if(id.equals(it.getId())){
-                return it;
-            }
-        }
-        return null;
+    public synchronized void addAirplane(Airplane airplane) {
+        storage.getAirplanes().add(airplane);
+    }
+
+    public synchronized void addCity(City city) {
+        storage.getCities().add(city);
+    }
+
+    public synchronized void addFlight(Flight flight) {
+        storage.getFlights().add(flight);
     }
 
     public synchronized void addPassenger(Passenger passenger) {
         storage.getPassengers().add(passenger);
     }
 
+    public synchronized void addTicket(Ticket ticket) {
+        storage.getTickets().add(ticket);
+    }
+
+    public Collection<Airplane> getAllAirplanes() {
+        return storage.getAirplanes();
+    }
+
+    public Collection<City> getAllCities() {
+        return storage.getCities();
+    }
+
+    public Collection<Flight> getAllFlights() {
+        return storage.getFlights();
+    }
+
     public Collection<Passenger> getAllPassengers() {
         return storage.getPassengers();
+    }
+
+    public Collection<Ticket> getAllTickets() {
+        return storage.getTickets();
+    }
+
+    public Airplane findAirplaneByName(String airplane) {
+        for (Airplane it : storage.getAirplanes()) {
+            if (airplane.equals(it.getName())) {
+                return it;
+            }
+        }
+        return null;
     }
 
     public City findCityByName(String city) {
@@ -74,46 +101,39 @@ public class DAObject {
         return null;
     }
 
-    public synchronized void addCity(City city) {
-        storage.getCities().add(city);
-    }
-
-    public InMemoryStorage getStorage(){
-        return storage;
-    }
-
-    public Airplane findAirplaneByName(String airplane){
-        for(Airplane it:storage.getAirplanes()){
-            if(airplane.equals(it.getName())){
+    public Flight findFlightById(BigInteger id) {
+        for (Flight it : storage.getFlights()) {
+            if (id.equals(it.getId())) {
                 return it;
             }
         }
         return null;
     }
-    public synchronized void addAirplane(Airplane airplane){
-        storage.getAirplanes().add(airplane);
-    }
-    public Flight findFlightById(BigInteger id){
-        for(Flight it:storage.getFlights()){
-            if(id.equals(it.getId())){
+
+    public Passenger findPassengerById(BigInteger id) {
+        for (Passenger it : storage.getPassengers()) {
+            if (id.equals(it.getId())) {
                 return it;
             }
         }
         return null;
-    }
-    public synchronized void addFlight(Flight flight){
-        storage.getFlights().add(flight);
     }
 
-    public Flight fingFlightById(BigInteger id){
-        for (Flight it: storage.getFlights()){
-            if(id.equals(it.getId())){
+    public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
+        for (Passenger it : storage.getPassengers()) {
+            if (passportNumber.equals(it.getPassportNumber()) && citizenship.equals(it.getCitizenship())) {
                 return it;
             }
         }
         return null;
     }
-    public synchronized void addTicket(Ticket ticket){
-        storage.getTickets().add(ticket);
+
+    public Ticket findTicketById(BigInteger id) {
+        for (Ticket it : storage.getTickets()) {
+            if (id.equals(it.getId())) {
+                return it;
+            }
+        }
+        return null;
     }
 }
