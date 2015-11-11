@@ -22,6 +22,7 @@ public final class CommandsEngine {
             listOfCommands.add(new AddPassengerCommand());
             listOfCommands.add(new ExitCommand());
             listOfCommands.add(new ViewCommand());
+            listOfCommands.add(new FindRoutesCommand());
 
             mapWithCommands = new HashMap<>();
             for (AbstractCommand it : listOfCommands) {
