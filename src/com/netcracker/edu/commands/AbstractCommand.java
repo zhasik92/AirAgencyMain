@@ -8,4 +8,5 @@ import java.io.IOException;
 public abstract class AbstractCommand {
     public abstract String getName();
     public abstract int execute(String[] parameters) throws IOException;
+    public abstract String getHelp();
 }

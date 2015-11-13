@@ -40,4 +40,9 @@ public class ExitCommand extends AbstractCommand {
         }
         return 0;
     }
+
+    @Override
+    public String getHelp() {
+        return "ExitCommand usage: "+"exit";
+    }
 }

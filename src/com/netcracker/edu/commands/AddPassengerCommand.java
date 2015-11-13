@@ -16,11 +16,16 @@ public class AddPassengerCommand extends AbstractCommand {
 
     @Override
     public String getName() {
-        return "addpassenger";
+        return "add_passenger";
     }
 
     @Override
     public int execute(String[] parameters) throws IOException {
+        createPassenger();
+        return 0;
+    }
+
+    public Passenger createPassenger() throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Please enter passport number:");
         String passportNumber = br.readLine();
@@ -32,7 +37,7 @@ public class AddPassengerCommand extends AbstractCommand {
         Passenger passenger = dao.findPassengerByPassportNumberAndCitizenship(passportNumber, citizenship);
         if (passenger != null) {
             System.out.println("passenger already exist");
-            return 0;
+            return passenger;
         }
         System.out.println("first name:");
         String firstName = br.readLine();
@@ -43,11 +48,16 @@ public class AddPassengerCommand extends AbstractCommand {
         System.out.println("date of birth(yyyy-[m]m-[d]d):");
         Date dateOfBirth = Date.valueOf(br.readLine());
 
-        System.out.println("email(not nessecary):");
+        System.out.println("email: ");
         String email = br.readLine();
 
         passenger = new Passenger(IdGenerator.getInstance().getId(), email,firstName,lastName,dateOfBirth, passportNumber, citizenship);
         dao.addPassenger(passenger);
-        return 0;
+        return passenger;
+
+    }
+    @Override
+    public String getHelp() {
+        return "AddPassengerCommand usage: "+"add_passenger";
     }
 }

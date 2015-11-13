@@ -26,4 +26,9 @@ public class ViewCommand extends AbstractCommand {
         dao.getAllAirplanes().forEach(System.out::println);
         return 0;
     }
+
+    @Override
+    public String getHelp() {
+        return "ViewCommand usage: "+"view";
+    }
 }

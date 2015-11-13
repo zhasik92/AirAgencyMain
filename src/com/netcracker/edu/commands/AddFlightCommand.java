@@ -57,4 +57,9 @@ public class AddFlightCommand extends AbstractCommand {
         dao.addFlight(flight);
         return 0;
     }
+
+    @Override
+    public String getHelp() {
+        return "AddFlightCommand usage: "+"add_flight";
+    }
 }

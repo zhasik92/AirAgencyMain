@@ -90,7 +90,7 @@ public class DijkstraAlgorithm {
     private double getShortestDistance(Vertex destination) {
         Double d = distance.get(destination);
         if (d == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         } else {
             return d;
         }
@@ -100,7 +100,10 @@ public class DijkstraAlgorithm {
      * This method returns the path from the source to the selected target and
      * NULL if no path exists
      */
-    public LinkedList<Vertex> getPath(Vertex target) {
+    public LinkedList<Vertex> getPathInVertexRepresentation(Vertex target) {
+        if(target==null){
+            throw new IllegalArgumentException();
+        }
         LinkedList<Vertex> path = new LinkedList<>();
         Vertex step = target;
         // check if a path exists
@@ -117,4 +120,20 @@ public class DijkstraAlgorithm {
         return path;
     }
 
+    public LinkedList<Edge> getPathInEdgesRepresentation(Vertex target){
+        LinkedList<Vertex> path=getPathInVertexRepresentation(target);
+        LinkedList<Edge> result=new LinkedList<>();
+        if(path==null){
+            return null;
+        }
+        for (int i = 0; i <path.size()-1 ; i++) {
+            for(Edge it:edges){
+                if(it.getFrom().getName().equals(path.get(i).getName())&&it.getTo().getName().equals(path.get(i+1).getName())){
+                    result.add(it);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
 }

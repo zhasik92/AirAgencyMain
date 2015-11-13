@@ -1,22 +1,24 @@
 package com.netcracker.edu.util;
 
+import java.math.BigInteger;
+
 /**
  * Created by Zhassulan on 11.11.2015.
  */
 public class Edge {
-    private final String id;
+    private final BigInteger id;
     private final Vertex from;
     private final Vertex to;
     private final double weight;
 
-    public Edge(String id, Vertex from, Vertex to, double weight) {
+    public Edge(BigInteger id, Vertex from, Vertex to, double weight) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.weight = weight;
     }
 
-    public String getId() {
+    public BigInteger getId() {
         return id;
     }
     public Vertex getTo() {
@@ -32,6 +34,6 @@ public class Edge {
 
     @Override
     public String toString() {
-        return from + " " + to;
+        return from + " " + to +" : "+weight;
     }
 }

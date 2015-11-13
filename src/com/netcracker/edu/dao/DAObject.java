@@ -6,6 +6,7 @@ import com.netcracker.edu.persist.InMemoryStorage;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Created by Zhassulan on 23.10.2015.
@@ -81,6 +82,28 @@ public class DAObject {
 
     public Collection<Ticket> getAllTickets() {
         return storage.getTickets();
+    }
+
+    public Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId) {
+        Collection<Ticket> tickets = storage.getTickets();
+        HashSet<Ticket> result = new HashSet<>();
+        for (Ticket it : tickets) {
+            if (it.isCanceled()) {
+                result.add(it);
+            }
+        }
+        return result;
+    }
+
+    public Collection<Ticket> getAllActualTicketsInFlight(BigInteger flightId) {
+        Collection<Ticket> tickets = storage.getTickets();
+        HashSet<Ticket> result = new HashSet<>();
+        for (Ticket it : tickets) {
+            if (!it.isCanceled()) {
+                result.add(it);
+            }
+        }
+        return result;
     }
 
     public Airplane findAirplaneByName(String airplane) {

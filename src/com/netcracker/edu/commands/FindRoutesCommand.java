@@ -25,28 +25,55 @@ public class FindRoutesCommand extends AbstractCommand {
 
     @Override
     public int execute(String[] parameters) throws IOException {
+        LinkedList<Flight> path = getPath(parameters[0], parameters[1]);
+        path.forEach(System.out::println);
+        return 0;
+
+    }
+
+    private void initializeNodesAndEdges() {
         DAObject dao = DAObject.getInstance();
-        nodes=new LinkedList<>();
-        Map<String, Vertex> tempNodes = new HashMap<>();
+        nodes = new LinkedList<>();
         edges = new ArrayList<>();
+        Map<String, Vertex> tempNodes = new HashMap<>();
+
+        //initializing nodes
         for (City it : dao.getAllCities()) {
             Vertex location = new Vertex(it.getName(), it.getName());
             tempNodes.put(location.getId(), location);
             nodes.add(location);
         }
+
+        //initializing edges
         for (Flight it : dao.getAllFlights()) {
-            Edge edge = new Edge(it.getId().toString(), tempNodes.get(it.getDepartureAirportName()), tempNodes.get(it.getArrivalAirportName()), it.getPrice());
+            Edge edge = new Edge(it.getId(), tempNodes.get(it.getDepartureAirportName()), tempNodes.get(it.getArrivalAirportName()), it.getPrice());
             edges.add(edge);
         }
+    }
 
+    public LinkedList<Flight> getPath(String from, String to) {
+        LinkedList<Flight> flights = new LinkedList<>();
+        DAObject dao = DAObject.getInstance();
+        Map<String, Vertex> tempNodes = new HashMap<>();
+        if (nodes == null || edges == null) {
+            initializeNodesAndEdges();
+        }
+        for (Vertex it : nodes) {
+            tempNodes.put(it.getId(), it);
+        }
         Graph graph = new Graph(nodes, edges);
         DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
-        dijkstra.execute(tempNodes.get("Almaty"));
-        LinkedList<Vertex> path = dijkstra.getPath(tempNodes.get("New York"));
-        for (Vertex vertex : path) {
-            System.out.println(vertex);
+        dijkstra.execute(tempNodes.get(from));
+        LinkedList<Edge> path = dijkstra.getPathInEdgesRepresentation(tempNodes.get(to));
+        for (Edge it : path) {
+            flights.add(dao.findFlightById(it.getId()));
         }
-        return 0;
-
+        return flights;
     }
+
+    @Override
+    public String getHelp() {
+        return "FindRoutesCommand usage: " + "find_routes DepartureCity ArrivalCity";
+    }
+
 }

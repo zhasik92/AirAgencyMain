@@ -35,4 +35,9 @@ public class AddAirplaneCommand extends AbstractCommand {
         dao.addAirplane(airplane);
         return 0;
     }
+
+    @Override
+    public String getHelp() {
+        return "AddAirplaneCommand usage: "+"add_airplane";
+    }
 }

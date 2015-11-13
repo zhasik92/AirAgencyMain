@@ -22,6 +22,10 @@ public class Main {
                     command.execute(Arrays.copyOfRange(splittedCommand, 1, splittedCommand.length));
                     continue;
                 }
+                if(splittedCommand[0].equals("help")){
+                    CommandsEngine.getInstance().getHelp();
+                    continue;
+                }
                 System.out.println("Unsupported command");
             }
         } catch (IOException e) {

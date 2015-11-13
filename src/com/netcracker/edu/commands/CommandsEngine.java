@@ -40,6 +40,8 @@ public final class CommandsEngine {
 
     public AbstractCommand getCommand(String commandName) {
         return mapWithCommands.get(commandName);
-
+    }
+    public void getHelp(){
+        mapWithCommands.forEach((k,v)->System.out.println(v.getHelp()));
     }
 }

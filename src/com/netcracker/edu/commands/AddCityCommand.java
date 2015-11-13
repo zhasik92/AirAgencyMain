@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 public class AddCityCommand extends AbstractCommand {
     @Override
     public String getName() {
-        return "addcity";
+        return "add_city";
     }
 
     @Override
@@ -32,5 +32,10 @@ public class AddCityCommand extends AbstractCommand {
         city = new City(cityName);
         dao.addCity(city);
         return 0;
+    }
+
+    @Override
+    public String getHelp() {
+        return "AddCityCommand usage: "+"add_city";
     }
 }
