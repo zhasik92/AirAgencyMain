@@ -108,7 +108,7 @@ public class DAObject {
 
     public Airplane findAirplaneByName(String airplane) {
         for (Airplane it : storage.getAirplanes()) {
-            if (airplane.equals(it.getName())) {
+            if (airplane.toLowerCase().equals(it.getName().toLowerCase())) {
                 return it;
             }
         }
@@ -117,7 +117,7 @@ public class DAObject {
 
     public City findCityByName(String city) {
         for (City it : storage.getCities()) {
-            if (city.equals(it.getName())) {
+            if (city.toLowerCase().equals(it.getName().toLowerCase())) {
                 return it;
             }
         }

@@ -14,7 +14,6 @@ public class DijkstraAlgorithm {
     private Map<Vertex, Double> distance;
 
     public DijkstraAlgorithm(Graph graph) {
-        // create a copy of the array so that we can operate on this array
         this.nodes = new ArrayList<>(graph.getVertexes());
         this.edges = new ArrayList<>(graph.getEdges());
     }

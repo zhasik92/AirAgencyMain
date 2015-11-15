@@ -25,7 +25,10 @@ public class FindRoutesCommand extends AbstractCommand {
 
     @Override
     public int execute(String[] parameters) throws IOException {
-        LinkedList<Flight> path = getPath(parameters[0], parameters[1]);
+        if(parameters==null||parameters.length!=2){
+            throw new IllegalArgumentException();
+        }
+        LinkedList<Flight> path = getPath(parameters[0].toLowerCase(), parameters[1].toLowerCase());
         path.forEach(System.out::println);
         return 0;
 
@@ -39,28 +42,34 @@ public class FindRoutesCommand extends AbstractCommand {
 
         //initializing nodes
         for (City it : dao.getAllCities()) {
-            Vertex location = new Vertex(it.getName(), it.getName());
+            Vertex location = new Vertex(it.getName().toLowerCase(), it.getName().toLowerCase());
             tempNodes.put(location.getId(), location);
             nodes.add(location);
         }
 
         //initializing edges
         for (Flight it : dao.getAllFlights()) {
-            Edge edge = new Edge(it.getId(), tempNodes.get(it.getDepartureAirportName()), tempNodes.get(it.getArrivalAirportName()), it.getPrice());
+            Edge edge = new Edge(it.getId(), tempNodes.get(it.getDepartureAirportName().toLowerCase()), tempNodes.get(it.getArrivalAirportName().toLowerCase()), it.getPrice());
             edges.add(edge);
         }
     }
 
     public LinkedList<Flight> getPath(String from, String to) {
-        LinkedList<Flight> flights = new LinkedList<>();
         DAObject dao = DAObject.getInstance();
+        if((dao.findCityByName(from))==null||(dao.findCityByName(to))==null) {
+            throw new IllegalArgumentException();
+        }
+        LinkedList<Flight> flights = new LinkedList<>();
         Map<String, Vertex> tempNodes = new HashMap<>();
+
         if (nodes == null || edges == null) {
             initializeNodesAndEdges();
         }
+
         for (Vertex it : nodes) {
             tempNodes.put(it.getId(), it);
         }
+
         Graph graph = new Graph(nodes, edges);
         DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
         dijkstra.execute(tempNodes.get(from));

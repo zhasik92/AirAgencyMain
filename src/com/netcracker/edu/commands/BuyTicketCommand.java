@@ -29,11 +29,11 @@ public class BuyTicketCommand extends AbstractCommand {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("From: ");
-        String buf = br.readLine();
+        String buf = br.readLine().toLowerCase();
         City from = dao.findCityByName(buf);
 
         System.out.println("To: ");
-        buf = br.readLine();
+        buf = br.readLine().toLowerCase();
         City to = dao.findCityByName(buf);
 
         if (from == null || to == null) {
@@ -41,8 +41,8 @@ public class BuyTicketCommand extends AbstractCommand {
             return 1;
         }
 
-        LinkedList<Ticket> tickets=buyTicket(passenger, from, to);
-        if(tickets==null){
+        LinkedList<Ticket> tickets = buyTicket(passenger, from, to);
+        if (tickets == null) {
             System.out.println("Sorry, all tickets have been sold.");
             return 1;
         }

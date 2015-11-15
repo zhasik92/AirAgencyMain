@@ -21,7 +21,7 @@ public abstract class NamedObject implements Serializable {
         if (name == null) {
             throw new IllegalArgumentException();
         }
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     @Override
