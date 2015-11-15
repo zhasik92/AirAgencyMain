@@ -72,8 +72,8 @@ public class FindRoutesCommand extends AbstractCommand {
 
         Graph graph = new Graph(nodes, edges);
         DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
-        dijkstra.execute(tempNodes.get(from));
-        LinkedList<Edge> path = dijkstra.getPathInEdgesRepresentation(tempNodes.get(to));
+        dijkstra.execute(tempNodes.get(from.toLowerCase()));
+        LinkedList<Edge> path = dijkstra.getPathInEdgesRepresentation(tempNodes.get(to.toLowerCase()));
         for (Edge it : path) {
             flights.add(dao.findFlightById(it.getId()));
         }
