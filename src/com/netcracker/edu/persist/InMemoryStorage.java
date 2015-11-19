@@ -14,12 +14,13 @@ public class InMemoryStorage implements Serializable {
     private HashSet<Airplane> airplanes;
     private HashSet<Ticket> tickets;
     private HashSet<Flight> flights;
+    private HashSet<User> users;
 
-    public HashSet<Passenger> getPassengers() {
-        if (passengers == null) {
-            passengers = new HashSet<>();
+    public HashSet<Airplane> getAirplanes() {
+        if (airplanes == null) {
+            airplanes = new HashSet<>();
         }
-        return passengers;
+        return airplanes;
     }
 
     public HashSet<City> getCities() {
@@ -29,22 +30,31 @@ public class InMemoryStorage implements Serializable {
         return cities;
     }
 
-    public HashSet<Airplane> getAirplanes() {
-        if (airplanes == null) {
-            airplanes = new HashSet<>();
+    public HashSet<Flight> getFlights(){
+        if(flights==null){
+            flights=new HashSet<>();
         }
-        return airplanes;
+        return flights;
     }
+
+    public HashSet<Passenger> getPassengers() {
+        if (passengers == null) {
+            passengers = new HashSet<>();
+        }
+        return passengers;
+    }
+
     public HashSet<Ticket> getTickets(){
         if(tickets==null){
             tickets=new HashSet<>();
         }
         return tickets;
     }
-    public HashSet<Flight> getFlights(){
-        if(flights==null){
-            flights=new HashSet<>();
+
+    public HashSet<User> getUsers() {
+        if(users==null){
+            users=new HashSet<>();
         }
-        return flights;
+        return users;
     }
 }

@@ -33,7 +33,7 @@ public class Flight extends HasIdObject implements Serializable{
         if (from == null) {
             throw new IllegalArgumentException();
         }
-        this.from = from;
+        this.from = from.toLowerCase();
     }
 
     public String getArrivalAirportName() {
@@ -44,7 +44,7 @@ public class Flight extends HasIdObject implements Serializable{
         if (to == null) {
             throw new IllegalArgumentException();
         }
-        this.to = to;
+        this.to = to.toLowerCase();
     }
 
     public Time getDepartureTime() {
@@ -77,7 +77,7 @@ public class Flight extends HasIdObject implements Serializable{
         if (airplane == null) {
             throw new IllegalArgumentException();
         }
-        this.airplane = airplane;
+        this.airplane = airplane.toLowerCase();
     }
 
     public double getPrice() {

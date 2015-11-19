@@ -3,7 +3,10 @@ package com.netcracker.edu.dao;
 import com.netcracker.edu.bobjects.*;
 import com.netcracker.edu.persist.InMemoryStorage;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
@@ -64,6 +67,10 @@ public class DAObject {
         storage.getTickets().add(ticket);
     }
 
+    public synchronized void addUser(User user){
+        storage.getUsers().add(user);
+    }
+
     public Collection<Airplane> getAllAirplanes() {
         return storage.getAirplanes();
     }
@@ -104,6 +111,10 @@ public class DAObject {
             }
         }
         return result;
+    }
+
+    public Collection<User> getAllUsers(){
+       return storage.getUsers();
     }
 
     public Airplane findAirplaneByName(String airplane) {
@@ -154,6 +165,15 @@ public class DAObject {
     public Ticket findTicketById(BigInteger id) {
         for (Ticket it : storage.getTickets()) {
             if (id.equals(it.getId())) {
+                return it;
+            }
+        }
+        return null;
+    }
+
+    public User findUserByLogin(String login){
+        for(User it: getAllUsers()){
+            if(it.getLogin().equals(login)){
                 return it;
             }
         }

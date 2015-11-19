@@ -1,5 +1,8 @@
 package com.netcracker.edu.commands;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.Map;
  * Created by Zhassulan on 23.10.2015.
  */
 public final class CommandsEngine {
+    private static final Logger logger = LogManager.getLogger(CommandsEngine.class);
     private static CommandsEngine instance;
     private Map<String, AbstractCommand> mapWithCommands;
 
@@ -28,6 +32,7 @@ public final class CommandsEngine {
             for (AbstractCommand it : listOfCommands) {
                 mapWithCommands.put(it.getName().toLowerCase(), it);
             }
+            logger.trace("commands engine constructed");
         }
     }
 
@@ -42,6 +47,6 @@ public final class CommandsEngine {
         return mapWithCommands.get(commandName);
     }
     public void getHelp(){
-        mapWithCommands.forEach((k,v)->System.out.println(v.getHelp()));
+        mapWithCommands.forEach((k,v)->logger.info(v.getHelp()));
     }
 }
