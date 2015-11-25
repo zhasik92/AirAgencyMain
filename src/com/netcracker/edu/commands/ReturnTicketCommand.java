@@ -1,6 +1,7 @@
 package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.Ticket;
+import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -14,13 +15,17 @@ import java.math.BigInteger;
 public class ReturnTicketCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(ReturnTicketCommand.class);
 
+    public ReturnTicketCommand() {
+        super(User.Roles.USER);
+    }
+
     @Override
     public String getName() {
         return "return";
     }
 
     @Override
-    public int execute(String[] parameters) throws IOException {
+    protected int execute(String[] parameters) throws IOException {
         logger.trace("return ticket execute() started");
         if (parameters == null || parameters.length != 1) {
             logger.error("illegal argument");

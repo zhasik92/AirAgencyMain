@@ -1,9 +1,6 @@
 package com.netcracker.edu.commands;
 
-import com.netcracker.edu.bobjects.City;
-import com.netcracker.edu.bobjects.Flight;
-import com.netcracker.edu.bobjects.Passenger;
-import com.netcracker.edu.bobjects.Ticket;
+import com.netcracker.edu.bobjects.*;
 import com.netcracker.edu.dao.DAObject;
 import com.netcracker.edu.util.IdGenerator;
 import org.apache.log4j.LogManager;
@@ -19,46 +16,45 @@ import java.util.LinkedList;
  */
 public class BuyTicketCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(BuyTicketCommand.class);
+
+    public BuyTicketCommand() {
+        super(User.Roles.USER);
+    }
+
     @Override
     public String getName() {
         return "buy_ticket";
     }
 
     @Override
-    public int execute(String[] parameters) throws IOException {
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+    protected int execute(String[] parameters) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        DAObject dao = DAObject.getInstance();
+        AddPassengerCommand addPassengerCommand = (AddPassengerCommand) CommandsEngine.getInstance().getCommand("add_passenger");
+        Passenger passenger = addPassengerCommand.createPassenger();
 
+        logger.info("From: ");
+        String buf = br.readLine().toLowerCase();
+        City from = dao.findCityByName(buf);
 
-            DAObject dao = DAObject.getInstance();
-            AddPassengerCommand addPassengerCommand = (AddPassengerCommand) CommandsEngine.getInstance().getCommand("add_passenger");
-            Passenger passenger = addPassengerCommand.createPassenger();
+        logger.info("to: ");
+        buf = br.readLine().toLowerCase();
+        City to = dao.findCityByName(buf);
 
-            logger.info("From: ");
-            String buf = br.readLine().toLowerCase();
-            City from = dao.findCityByName(buf);
-
-            logger.info("to: ");
-            buf = br.readLine().toLowerCase();
-            City to = dao.findCityByName(buf);
-
-            if (from == null || to == null) {
-                logger.warn("illegal cities");
-                return 1;
-            }
-
-            LinkedList<Ticket> tickets = buyTicket(passenger, from, to);
-            if (tickets == null) {
-                logger.warn("Sorry, all tickets have been sold");
-                return 1;
-            }
-            for (Ticket it : tickets) {
-                logger.info(it.toString());
-            }
-            return 0;
-        }catch (IOException ioe){
-            logger.error(ioe);
-            throw ioe;
+        if (from == null || to == null) {
+            logger.warn("illegal cities");
+            return 1;
         }
+
+        LinkedList<Ticket> tickets = buyTicket(passenger, from, to);
+        if (tickets == null) {
+            logger.warn("Sorry, all tickets have been sold");
+            return 1;
+        }
+        for (Ticket it : tickets) {
+            logger.info(it.toString());
+        }
+        return 0;
     }
 
     //return LinkedList with bought tickets or null if no tickets available
@@ -73,7 +69,7 @@ public class BuyTicketCommand extends AbstractCommand {
             int airplaneCapacity = dao.findAirplaneByName(it.getAirplaneName()).getCapacity();
             int numberOfSoldTickets = dao.getAllActualTicketsInFlight(it.getId()).size();
             if (airplaneCapacity - numberOfSoldTickets < 1) {
-                logger.trace("No available tickets it flight, id = "+it.getId());
+                logger.trace("No available tickets it flight, id = " + it.getId());
                 return null;
             }
         }
@@ -81,7 +77,7 @@ public class BuyTicketCommand extends AbstractCommand {
         LinkedList<Ticket> currentTickets = new LinkedList<>();
         for (Flight it : path) {
             Ticket ticket = new Ticket(IdGenerator.getInstance().getId(), passenger.getId(), it.getId(), false);
-            logger.trace("Ticket created,  id = "+ticket.getId());
+            logger.trace("Ticket created,  id = " + ticket.getId());
             dao.addTicket(ticket);
             currentTickets.add(ticket);
             logger.trace("ticket saved");

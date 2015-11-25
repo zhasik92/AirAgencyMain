@@ -61,14 +61,14 @@ public abstract class HasIdObject implements Serializable {
 
                 result.append(it.getName());
                 result.append(": ");
-                //requires access to private field:
+                //requires role to private field:
                 result.append(it.get(this));
                 result.append(newLine);
             }
             for (Field field : fields) {
                 result.append(field.getName());
                 result.append(": ");
-                //requires access to private field:
+                //requires role to private field:
                 result.append(field.get(this));
                 result.append(newLine);
             }

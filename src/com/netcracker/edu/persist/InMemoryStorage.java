@@ -9,6 +9,7 @@ import java.util.HashSet;
  * Created by Zhassulan on 23.10.2015.
  */
 public class InMemoryStorage implements Serializable {
+    private static final long serialVersionUID= 1524210734632465536L;
     private HashSet<Passenger> passengers;
     private HashSet<City> cities;
     private HashSet<Airplane> airplanes;

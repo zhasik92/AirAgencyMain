@@ -22,11 +22,14 @@ public final class CommandsEngine {
             listOfCommands.add(new AddAirplaneCommand());
             listOfCommands.add(new AddCityCommand());
             listOfCommands.add(new AddFlightCommand());
-            listOfCommands.add(new BuyTicketCommand());
             listOfCommands.add(new AddPassengerCommand());
+            listOfCommands.add(new BuyTicketCommand());
             listOfCommands.add(new ExitCommand());
-            listOfCommands.add(new ViewCommand());
             listOfCommands.add(new FindRoutesCommand());
+            listOfCommands.add(new RegisterCommand());
+            listOfCommands.add(new ReturnTicketCommand());
+            listOfCommands.add(new SignInCommand());
+            listOfCommands.add(new ViewCommand());
 
             mapWithCommands = new HashMap<>();
             for (AbstractCommand it : listOfCommands) {

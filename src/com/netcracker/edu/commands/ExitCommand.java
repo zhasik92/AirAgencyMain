@@ -1,5 +1,6 @@
 package com.netcracker.edu.commands;
 
+import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
 import com.netcracker.edu.persist.InMemoryStorage;
 import com.netcracker.edu.util.IdGenerator;
@@ -16,43 +17,44 @@ import java.math.BigInteger;
  */
 public class ExitCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(ExitCommand.class);
+
+    public ExitCommand() {
+        super(User.Roles.USER);
+    }
+
     @Override
     public String getName() {
         return "exit";
     }
 
     @Override
-    public int execute(String[] parameters) throws IOException {
-        try {
-            InMemoryStorage storage=DAObject.getInstance().getStorage();
-            FileOutputStream fos = new FileOutputStream("InMemoryStorage.out");
-            logger.trace("FOS created(InMemoryStorage.out)");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            logger.trace("OOS created");
-            oos.writeObject(storage);
-            oos.flush();
-            logger.trace("storage wrote to file");
-            oos.close();
-            logger.trace("FOS closed");
+    protected int execute(String[] parameters) throws IOException {
+        InMemoryStorage storage = DAObject.getInstance().getStorage();
+        FileOutputStream fos = new FileOutputStream("InMemoryStorage.out");
+        logger.trace("FOS created(InMemoryStorage.out)");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        logger.trace("OOS created");
+        oos.writeObject(storage);
+        oos.flush();
+        logger.trace("storage wrote to file");
+        oos.close();
+        logger.trace("FOS closed");
 
-            BigInteger id = IdGenerator.getInstance().getId();
-            fos = new FileOutputStream("idGen.out");
-            oos = new ObjectOutputStream(fos);
-            logger.trace("OOS created (idGen.out)");
-            oos.writeObject(id);
-            oos.flush();
-            logger.trace("idGen writted to file");
-            oos.close();
-            logger.trace("exit");
-            System.exit(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        BigInteger id = IdGenerator.getInstance().getId();
+        fos = new FileOutputStream("idGen.out");
+        oos = new ObjectOutputStream(fos);
+        logger.trace("OOS created (idGen.out)");
+        oos.writeObject(id);
+        oos.flush();
+        logger.trace("idGen writted to file");
+        oos.close();
+        logger.trace("exit");
+        System.exit(0);
+        return 1;
     }
 
     @Override
     public String getHelp() {
-        return "ExitCommand usage: "+getName();
+        return "ExitCommand usage: " + getName();
     }
 }

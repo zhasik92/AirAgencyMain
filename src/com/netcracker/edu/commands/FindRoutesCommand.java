@@ -2,6 +2,7 @@ package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.City;
 import com.netcracker.edu.bobjects.Flight;
+import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
 import com.netcracker.edu.util.DijkstraAlgorithm;
 import com.netcracker.edu.util.Edge;
@@ -21,14 +22,18 @@ public class FindRoutesCommand extends AbstractCommand {
     private List<Vertex> nodes;
     private List<Edge> edges;
 
+    public FindRoutesCommand() {
+        super(User.Roles.USER);
+    }
+
     @Override
     public String getName() {
         return "find_routes";
     }
 
     @Override
-    public int execute(String[] parameters) throws IOException {
-        if(parameters==null||parameters.length!=2){
+    protected int execute(String[] parameters) throws IOException {
+        if (parameters == null || parameters.length != 2) {
             logger.error("illegal arguments");
             throw new IllegalArgumentException();
         }
@@ -57,14 +62,14 @@ public class FindRoutesCommand extends AbstractCommand {
         for (Flight it : dao.getAllFlights()) {
             Edge edge = new Edge(it.getId(), tempNodes.get(it.getDepartureAirportName().toLowerCase()), tempNodes.get(it.getArrivalAirportName().toLowerCase()), it.getPrice());
             edges.add(edge);
-            logger.trace("edge has been added to edges, id = "+edge.getId());
+            logger.trace("edge has been added to edges, id = " + edge.getId());
         }
     }
 
     public LinkedList<Flight> getPath(String from, String to) {
         logger.trace("getPath()");
         DAObject dao = DAObject.getInstance();
-        if((dao.findCityByName(from))==null||(dao.findCityByName(to))==null) {
+        if ((dao.findCityByName(from)) == null || (dao.findCityByName(to)) == null) {
             throw new IllegalArgumentException();
         }
         LinkedList<Flight> flights = new LinkedList<>();
@@ -92,7 +97,7 @@ public class FindRoutesCommand extends AbstractCommand {
 
     @Override
     public String getHelp() {
-        return "FindRoutesCommand usage: " + getName() +" departureCity arrivalCity";
+        return "FindRoutesCommand usage: " + getName() + " departureCity arrivalCity";
     }
 
 }

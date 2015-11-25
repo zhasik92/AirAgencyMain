@@ -11,26 +11,29 @@ import java.util.Set;
 public class User implements Serializable {
     private String login;
     private char[] password;
-    boolean isAdmin;
-    private Set<BigInteger> tickets=new HashSet<>();
+    private final Roles role;
+    private Set<BigInteger> tickets = new HashSet<>();
 
-    public User(String login,char[] password){
+    public enum Roles {USER, ADMIN}
+
+    public User(String login, char[] password) {
         setLogin(login);
         setPassword(password);
-        this.isAdmin=false;
+        this.role = Roles.USER;
     }
 
-    public User(String login, char[] password, boolean isAdmin) {
+    public User(String login, char[] password, Roles role) {
         setLogin(login);
         setPassword(password);
-        this.isAdmin = isAdmin;
+        this.role = role;
+
     }
 
-    private void setLogin(String login){
-        if(login==null||login.isEmpty()){
+    private void setLogin(String login) {
+        if (login == null || login.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        this.login=login;
+        this.login = login;
     }
 
     public String getLogin() {
@@ -42,20 +45,21 @@ public class User implements Serializable {
     }
 
     public void setPassword(char[] password) {
-        if(password==null||password.length<3){
+        if (password == null || password.length < 3) {
             throw new IllegalArgumentException();
         }
         this.password = password;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public Roles role() {
+        return this.role;
     }
 
     public Set<BigInteger> getTickets() {
         return tickets;
     }
-    public void addTicket(BigInteger ticketId){
+
+    public void addTicket(BigInteger ticketId) {
         tickets.add(ticketId);
     }
 
