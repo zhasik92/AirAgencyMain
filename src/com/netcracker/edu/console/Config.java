@@ -10,8 +10,11 @@ import java.io.*;
 import java.util.Arrays;
 
 /**
+ *
  * Created by Zhassulan on 25.11.2015.
  */
+
+//// TODO: 26.11.2015 Rename class
 public class Config {
     private final static Logger logger = LogManager.getLogger(Config.class);
 
@@ -25,6 +28,7 @@ public class Config {
             inputStreamReader = new InputStreamReader(System.in);
         }
         try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+            //noinspection InfiniteLoopStatement
             while (true) {
                 logger.info("write command");
                 String[] splittedCommand = bufferedReader.readLine().split(" ");

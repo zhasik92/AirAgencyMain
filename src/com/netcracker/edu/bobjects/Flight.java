@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.sql.Time;
 
 /**
- * Created by Zhassulan on 20.10.2015.
+ *  Created by Zhassulan on 20.10.2015.
  */
 public class Flight extends HasIdObject implements Serializable{
     private String from;
