@@ -35,7 +35,7 @@ public class FindRoutesCommand extends AbstractCommand {
     protected int execute(String[] parameters) throws IOException {
         if (parameters == null || parameters.length != 2) {
             logger.error("illegal arguments");
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("required 2 arguments");
         }
         LinkedList<Flight> path = getPath(parameters[0].toLowerCase(), parameters[1].toLowerCase());
         path.forEach(logger::info);

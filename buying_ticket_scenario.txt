@@ -1,0 +1,4 @@
+sign_in admin admin
+find_routes Chisinau Almaty
+buy_ticket Chisinau Almaty n701 kz
+exit

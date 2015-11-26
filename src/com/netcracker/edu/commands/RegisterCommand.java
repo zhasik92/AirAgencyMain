@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
  */
 public class RegisterCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(RegisterCommand.class);
+    private static DAObject dao = DAObject.getInstance();
 
     public RegisterCommand() {
         super(User.Roles.USER);
@@ -31,19 +32,26 @@ public class RegisterCommand extends AbstractCommand {
 
     @Override
     protected int execute(String[] parameters) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        DAObject dao = DAObject.getInstance();
-
-        logger.info("Enter login: ");
-        String login = br.readLine();
+        String login;
+        char[] password;
+        if (parameters == null || parameters.length < 1) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            logger.info("Enter login: ");
+            login = br.readLine();
+            logger.info("enter password: ");
+            password = br.readLine().toCharArray();
+        } else {
+            if (parameters.length != 2) {
+                throw new IllegalArgumentException("required 2 parameters");
+            }
+            login = parameters[0];
+            password = parameters[1].toCharArray();
+        }
         User user = dao.findUserByLogin(login);
         if (user != null) {
             logger.warn("login already registered");
             return 0;
         }
-
-        logger.info("enter password: ");
-        char[] password = br.readLine().toCharArray();
 
         user = createUser(login, password);
         dao.addUser(user);
@@ -58,6 +66,6 @@ public class RegisterCommand extends AbstractCommand {
 
     @Override
     public String getHelp() {
-        return getName() + " login password";
+        return "\""+getName()+"\"" +" or "+"\""+getName()+ " login password\"";
     }
 }

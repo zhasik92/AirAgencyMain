@@ -28,14 +28,20 @@ public class AddCityCommand extends AbstractCommand {
     @Override
     protected int execute(String[] parameters) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        logger.info("Enter name of City:");
-        String cityName = br.readLine();
-
         DAObject dao = DAObject.getInstance();
-        City city = dao.findCityByName(cityName);
+        City city;
+        String cityName;
+        if (parameters != null && !parameters[0].isEmpty() && parameters.length == 1) {
+            cityName = parameters[0];
+        } else {
+            logger.info("Enter name of City:");
+            cityName = br.readLine();
+        }
+
+        city = dao.findCityByName(cityName);
         if (city != null) {
             logger.info("City already exist");
-            return 0;
+            return 1;
         }
 
         city = new City(cityName);
@@ -46,6 +52,6 @@ public class AddCityCommand extends AbstractCommand {
 
     @Override
     public String getHelp() {
-        return "AddCityCommand usage: " + getName();
+        return "AddCityCommand usage: " + "\"" + getName() + "\"" + "or " + "\"" + getName() + "CityName" + "\"";
     }
 }

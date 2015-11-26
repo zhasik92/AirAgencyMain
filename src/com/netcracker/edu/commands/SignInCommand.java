@@ -34,23 +34,34 @@ public class SignInCommand extends AbstractCommand {
 
     @Override
     protected int execute(String[] parameters) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        logger.info("enter login");
-        String login = br.readLine();
-        User user = dao.findUserByLogin(login);
-        logger.info("enter password");
-        char[] password = br.readLine().toCharArray();
+        User user;
+        String login;
+        char[] password;
+        if (parameters == null || parameters.length < 1) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            logger.info("enter login");
+            login = br.readLine();
+            logger.info("enter password");
+            password = br.readLine().toCharArray();
+        } else {
+            if (parameters.length != 2) {
+                throw new IllegalArgumentException("required 2 parameters");
+            }
+            login = parameters[0];
+            password = parameters[1].toCharArray();
+        }
+        user = dao.findUserByLogin(login);
         if (user == null || !Arrays.equals(user.getPassword(), password)) {
             logger.warn("Login and password are incorrect");
             return 1;
         }
         SecurityContextHolder.setLoggedUser(user);
-        logger.info("logged in");
+        logger.info("signed in");
         return 0;
     }
 
     @Override
     public String getHelp() {
-        return getName();
+        return "SignInCommand usage:" +"\""+getName()+"\""+" or \""+getName()+"login password\"";
     }
 }
