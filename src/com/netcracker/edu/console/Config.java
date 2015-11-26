@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.Arrays;
 
 /**
+ * If buying_ticket_scenario.txt exists in project root folder commands will be read from it
+ * otherwise from console.
  *
  * Created by Zhassulan on 25.11.2015.
  */
