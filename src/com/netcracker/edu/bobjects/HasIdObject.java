@@ -16,7 +16,7 @@ public abstract class HasIdObject implements Serializable {
 
     private void setId(BigInteger id) {
         if (id.compareTo(BigInteger.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("id can't be negative");
         }
         this.id = id;
     }

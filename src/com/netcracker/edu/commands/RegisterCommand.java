@@ -50,7 +50,7 @@ public class RegisterCommand extends AbstractCommand {
         User user = dao.findUserByLogin(login);
         if (user != null) {
             logger.warn("login already registered");
-            return 0;
+            return 1;
         }
 
         user = createUser(login, password);

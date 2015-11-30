@@ -16,10 +16,10 @@ public abstract class NamedObject implements Serializable {
     public String getName() {
         return name;
     }
-
+    //Whitespaces not allowed in name
     public void setName(String name) {
         if (name == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Name can't be null");
         }
         this.name = name.toLowerCase();
     }

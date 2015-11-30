@@ -155,7 +155,7 @@ public class DAObject {
 
     public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
         for (Passenger it : storage.getPassengers()) {
-            if (passportNumber.equals(it.getPassportNumber()) && citizenship.equals(it.getCitizenship())) {
+            if (passportNumber.equals(it.getPassportNumber()) && citizenship.toLowerCase().equals(it.getCitizenship().toLowerCase())) {
                 return it;
             }
         }
@@ -173,7 +173,7 @@ public class DAObject {
 
     public User findUserByLogin(String login){
         for(User it: getAllUsers()){
-            if(it.getLogin().equals(login)){
+            if(it.getLogin().toLowerCase().equals(login.toLowerCase())){
                 return it;
             }
         }

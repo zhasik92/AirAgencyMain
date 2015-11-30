@@ -9,6 +9,7 @@ import java.util.Set;
  * Created by Zhassulan on 15.11.2015.
  */
 public class User implements Serializable {
+    private static final long serialVersionUID= -439309840366060163L;
     private String login;
     private char[] password;
     private final Roles role;
@@ -29,9 +30,9 @@ public class User implements Serializable {
 
     }
 
-    private void setLogin(String login) {
+    public void setLogin(String login) {
         if (login == null || login.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("invalid login");
         }
         this.login = login;
     }

@@ -23,8 +23,8 @@ public class Ticket extends HasIdObject implements Serializable {
     }
 
     public void setPassengerId(BigInteger passenger) {
-        if (passenger == null) {
-            throw new IllegalArgumentException();
+        if (passenger == null||passenger.compareTo(BigInteger.ZERO)<0) {
+            throw new IllegalArgumentException("passenger's id can't be null or negative");
         }
         this.passenger = passenger;
     }
@@ -34,8 +34,8 @@ public class Ticket extends HasIdObject implements Serializable {
     }
 
     public void setFlightId(BigInteger flight) {
-        if (flight == null) {
-            throw new IllegalArgumentException();
+        if (flight == null||passenger.compareTo(BigInteger.ZERO)<0) {
+            throw new IllegalArgumentException("flight id can't be null or negative");
         }
         this.flight = flight;
     }

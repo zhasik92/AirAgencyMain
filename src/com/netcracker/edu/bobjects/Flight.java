@@ -31,7 +31,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setDepartureAirportName(String from) {
         if (from == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Departure city can't be null");
         }
         this.from = from.toLowerCase();
     }
@@ -42,7 +42,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setArrivalAirportName(String to) {
         if (to == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("arrival city can't be null");
         }
         this.to = to.toLowerCase();
     }
@@ -53,7 +53,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setDepartureTime(Time departureTime) {
         if (departureTime == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("departure time can't be null");
         }
         this.departureTime = departureTime;
     }
@@ -64,7 +64,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setArrivalTime(Time arrivalTime) {
         if (arrivalTime == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("arrival time can't be null");
         }
         this.arrivalTime = arrivalTime;
     }
@@ -75,7 +75,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setAirplane(String airplane) {
         if (airplane == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("airplane can't be null");
         }
         this.airplane = airplane.toLowerCase();
     }
@@ -86,7 +86,7 @@ public class Flight extends HasIdObject implements Serializable{
 
     public void setPrice(double price) {
         if(price<0){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("price can't be negative");
         }
         this.price = price;
     }

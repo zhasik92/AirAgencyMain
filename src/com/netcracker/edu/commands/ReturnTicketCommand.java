@@ -14,6 +14,7 @@ import java.math.BigInteger;
  */
 public class ReturnTicketCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(ReturnTicketCommand.class);
+    private static DAObject dao = DAObject.getInstance();
 
     public ReturnTicketCommand() {
         super(User.Roles.USER);
@@ -32,22 +33,22 @@ public class ReturnTicketCommand extends AbstractCommand {
             throw new IllegalArgumentException();
         }
         BigInteger ticketId = BigInteger.valueOf(Long.parseLong(parameters[0]));
-        returnTicket(ticketId);
-        return 0;
+        return returnTicket(ticketId);
     }
 
-    public void returnTicket(BigInteger ticketId) {
+    public int returnTicket(BigInteger ticketId) {
         if (ticketId == null || ticketId.compareTo(BigInteger.ZERO) < 0) {
+            logger.warn("illegal argument");
             throw new IllegalArgumentException();
         }
-        DAObject dao = DAObject.getInstance();
         Ticket ticket = dao.findTicketById(ticketId);
-        if (ticket == null) {
-            logger.warn("ticket not found");
-            return;
+        if (ticket == null||ticket.isCanceled()) {
+            logger.warn("ticket not found or already returned");
+            return 1;
         }
         ticket.setStatus(true);
         logger.info("ticket returned");
+        return 0;
     }
 
     @Override

@@ -45,7 +45,7 @@ public class Passenger extends HasIdObject implements Serializable {
                 "\t\t+ \"[A-Za-z0-9-]+(\\\\.[A-Za-z0-9]+)*(\\\\.[A-Za-z]{2,})$");
         Matcher matcher = pattern.matcher(email);
        /* if (!matcher.matches()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("invalid email address");
         }*/
         this.email = email;
     }
@@ -82,7 +82,7 @@ public class Passenger extends HasIdObject implements Serializable {
         Pattern pattern = Pattern.compile("^[A-Za-z]?[0-9]*$");
         Matcher matcher = pattern.matcher(passportNumber);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("invalid passport number");
         }
         this.passportNumber = passportNumber;
     }

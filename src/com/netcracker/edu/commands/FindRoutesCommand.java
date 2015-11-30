@@ -19,6 +19,7 @@ import java.util.*;
  */
 public class FindRoutesCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(FindRoutesCommand.class);
+    private static DAObject dao = DAObject.getInstance();
     private List<Vertex> nodes;
     private List<Edge> edges;
 
@@ -45,7 +46,6 @@ public class FindRoutesCommand extends AbstractCommand {
 
     private void initializeNodesAndEdges() {
         logger.trace("initializeNodesAndEdges()");
-        DAObject dao = DAObject.getInstance();
         nodes = new LinkedList<>();
         edges = new ArrayList<>();
         Map<String, Vertex> tempNodes = new HashMap<>();
@@ -55,7 +55,7 @@ public class FindRoutesCommand extends AbstractCommand {
             Vertex location = new Vertex(it.getName().toLowerCase(), it.getName().toLowerCase());
             tempNodes.put(location.getId(), location);
             nodes.add(location);
-            logger.trace("location has beeh added to nodes, id = " + location.getId());
+            logger.trace("location has been added to nodes, id = " + location.getId());
         }
 
         //initializing edges
@@ -68,9 +68,8 @@ public class FindRoutesCommand extends AbstractCommand {
 
     public LinkedList<Flight> getPath(String from, String to) {
         logger.trace("getPath()");
-        DAObject dao = DAObject.getInstance();
         if ((dao.findCityByName(from)) == null || (dao.findCityByName(to)) == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Cities have not found");
         }
         LinkedList<Flight> flights = new LinkedList<>();
         Map<String, Vertex> tempNodes = new HashMap<>();

@@ -13,6 +13,10 @@ public abstract class AbstractCommand {
 
     public abstract String getName();
 
+    public AbstractCommand(User.Roles role) {
+        this.role = role;
+    }
+
     public int execute(String[] parameters, User user) throws IOException {
         if (user == null) {
             throw new IllegalArgumentException("User can't be null, sign in first");
@@ -25,12 +29,8 @@ public abstract class AbstractCommand {
 
     public abstract String getHelp();
 
-    public AbstractCommand(User.Roles role) {
-        this.role = role;
-    }
-
     protected void checkAccess(User.Roles role) {
-        if (this.role.compareTo(role) < 0) {
+        if (this.role.compareTo(role) > 0) {
             throw new AccessControlException("acces denied");
         }
     }

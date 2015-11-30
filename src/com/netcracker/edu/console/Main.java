@@ -1,5 +1,6 @@
 package com.netcracker.edu.console;
 
+import com.netcracker.edu.connections.Server;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -13,7 +14,20 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Config.execute();
+            switch (args[0].toLowerCase()) {
+                case "server":
+                    logger.info("server mode started");
+                    Server.execute();
+                    break;
+                case "test":
+                    logger.info("test mode started");
+                    CommandsReader.readCommandsFromTestFileAndExecute();
+                    break;
+                case "console":
+                    logger.info("Console mode started");
+                    CommandsReader.readCommandsFromConsoleAndExecute();
+                    break;
+            }
         } catch (IOException ioe) {
             logger.error(ioe);
             ioe.printStackTrace();

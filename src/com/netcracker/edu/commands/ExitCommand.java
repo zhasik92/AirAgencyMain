@@ -50,7 +50,7 @@ public class ExitCommand extends AbstractCommand {
         oos.close();
         logger.trace("exit");
         System.exit(0);
-        return 1;
+        return 0;
     }
 
     @Override

@@ -20,7 +20,7 @@ public class Airplane extends NamedObject implements Serializable {
 
     public void setCapacity(int capacity) {
         if (capacity < 1) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Capasity can't be negative");
         }
         this.capacity = capacity;
     }
