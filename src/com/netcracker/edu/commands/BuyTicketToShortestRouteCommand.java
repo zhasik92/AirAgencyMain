@@ -14,34 +14,36 @@ import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * Created by Zhassulan on 30.10.2015.
+ * Created by Zhassulan on 07.12.2015.
  */
-public class BuyTicketCommand extends AbstractCommand {
-    private static final Logger logger = LogManager.getLogger(BuyTicketCommand.class);
+public class BuyTicketToShortestRouteCommand extends AbstractCommand {
+    private static final Logger logger = LogManager.getLogger(FindRoutesCommand.class);
     private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
-    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-    public BuyTicketCommand() {
+    public BuyTicketToShortestRouteCommand() {
         super(User.Roles.USER);
     }
 
     @Override
     public String getName() {
-        return "buy_ticket";
+        return "buy_short_ticket";
     }
 
     @Override
     protected int execute(String[] parameters) throws IOException {
-        String passport = null;
-        String citizenship = null;
-        City from = null;
-        City to = null;
-        Calendar flightDate = null;
+        String passport;
+        String citizenship;
+        City from;
+        City to;
         Passenger passenger;
-        LinkedList<Ticket> tickets;
+        Calendar flightDate = Calendar.getInstance();
+        List<Ticket> tickets;
         try {
             if (parameters == null || parameters.length < 1) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -51,23 +53,20 @@ public class BuyTicketCommand extends AbstractCommand {
                 logger.info("to: ");
                 buf = br.readLine().toLowerCase();
                 to = dao.findCityByName(buf);
-                logger.info("Flight date(yyyy-MM-dd):");
-                buf = br.readLine();
-                flightDate = Calendar.getInstance();
-                synchronized (this) {
-                    flightDate.setTime(df.parse(buf));
-                }
                 logger.info("passport number:");
                 passport = br.readLine();
                 logger.info("citizenship:");
                 citizenship = br.readLine();
+                logger.info("FlightDate(yyyy-MM-dd):");
+                synchronized (this) {
+                    flightDate.setTime(df.parse(br.readLine()));
+                }
             } else {
                 if (parameters.length != 5) {
-                    throw new IllegalArgumentException("requared 5 parameters");
+                    throw new IllegalArgumentException("required 5 parameters");
                 }
                 from = dao.findCityByName(parameters[0]);
                 to = dao.findCityByName(parameters[1]);
-                flightDate = Calendar.getInstance();
                 synchronized (this) {
                     flightDate.setTime(df.parse(parameters[2]));
                 }
@@ -75,7 +74,7 @@ public class BuyTicketCommand extends AbstractCommand {
                 citizenship = parameters[4];
             }
         } catch (ParseException e) {
-            logger.error("illegal flightdate format");
+            logger.error("cannot parse date");
             return -1;
         }
         passenger = dao.findPassengerByPassportNumberAndCitizenship(passport, citizenship);
@@ -98,17 +97,16 @@ public class BuyTicketCommand extends AbstractCommand {
         return 0;
     }
 
-    //return LinkedList with bought tickets or null if no tickets available
-    public LinkedList<Ticket> buyTicket(Passenger passenger, City from, City to, Calendar flightDate) {
-        if (passenger == null || from == null || to == null) {
+    public List<Ticket> buyTicket(Passenger passenger, City from, City to, Calendar flightDate) {
+        if (passenger == null || from == null || to == null || flightDate == null) {
             throw new IllegalArgumentException();
         }
-        FindRoutesCommand findRoutesCommand = (FindRoutesCommand) CommandsEngine.getInstance().getCommand("find_routes");
-        LinkedList<Flight> path = findRoutesCommand.getPath(from.getName(), to.getName());
+        FindShortestRoutesCommand findShortestRoute = (FindShortestRoutesCommand) CommandsEngine.getInstance().getCommand("find_short_route");
+        List<Flight> path = findShortestRoute.getPath(from.getName(), to.getName(), "00:00");
         LinkedList<Ticket> currentTickets = new LinkedList<>();
         List<Calendar> flightDates = new LinkedList<>();
         Calendar currentDate = (Calendar) flightDate.clone();
-        Flight temp = path.getFirst();
+        Flight temp = path.get(0);
         synchronized (this) {
             for (Flight it : path) {
                 if (temp.getArrivalTime().compareTo(it.getDepartureTime()) > 0) {
@@ -122,7 +120,7 @@ public class BuyTicketCommand extends AbstractCommand {
                     logger.warn("No available tickets in flight, id = " + it.getId() +
                             ", from: " + it.getDepartureAirportName() +
                             ", to: " + it.getArrivalAirportName() +
-                            " at: " + currentDate.get(Calendar.YEAR) + " " + currentDate.get(Calendar.MONTH) + " " + currentDate.get(Calendar.DATE));
+                            " at: " + currentDate.get(Calendar.YEAR)+" "+currentDate.get(Calendar.MONTH)+" "+currentDate.get(Calendar.DATE));
                     return null;
                 }
                 temp = it;
@@ -142,6 +140,6 @@ public class BuyTicketCommand extends AbstractCommand {
 
     @Override
     public String getHelp() {
-        return "BuyTicketCommand usage: " + "\"" + getName() + "\"" + " or " + "\"" + getName() + "From To passportNumber citizenship" + "\"";
+        return null;
     }
 }

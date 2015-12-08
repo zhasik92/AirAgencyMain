@@ -3,6 +3,7 @@ package com.netcracker.edu.commands;
 import com.netcracker.edu.bobjects.Airplane;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -16,7 +17,7 @@ import java.io.InputStreamReader;
  */
 public class AddAirplaneCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(AddAirplaneCommand.class);
-    private static DAObject dao = DAObject.getInstance();
+    private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
 
     public AddAirplaneCommand() {
         super(User.Roles.ADMIN);

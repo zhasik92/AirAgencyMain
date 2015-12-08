@@ -1,4 +1,4 @@
-package com.netcracker.edu.util;
+package com.netcracker.edu.util.cheapestpathalgo;
 
 /**
  * Created by Zhassulan on 11.11.2015.

@@ -47,7 +47,7 @@ public class User implements Serializable {
 
     public void setPassword(char[] password) {
         if (password == null || password.length < 3) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("password can't be null, or less than 3 chars");
         }
         this.password = password;
     }

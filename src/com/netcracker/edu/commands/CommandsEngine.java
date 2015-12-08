@@ -1,5 +1,6 @@
 package com.netcracker.edu.commands;
 
+import com.netcracker.edu.commands.JustForTestingCommand.ReturnLastBoughtTicket;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -24,12 +25,16 @@ public final class CommandsEngine {
             listOfCommands.add(new AddFlightCommand());
             listOfCommands.add(new AddPassengerCommand());
             listOfCommands.add(new BuyTicketCommand());
+            listOfCommands.add(new BuyTicketToShortestRouteCommand());
             listOfCommands.add(new ExitCommand());
             listOfCommands.add(new FindRoutesCommand());
+            listOfCommands.add(new FindShortestRoutesCommand());
             listOfCommands.add(new RegisterCommand());
             listOfCommands.add(new ReturnTicketCommand());
             listOfCommands.add(new SignInCommand());
             listOfCommands.add(new ViewCommand());
+            listOfCommands.add(new ReturnLastBoughtTicket());
+            listOfCommands.add(new QuitCommand());
 
             mapWithCommands = new HashMap<>();
             for (AbstractCommand it : listOfCommands) {

@@ -3,6 +3,7 @@ package com.netcracker.edu.commands;
 import com.netcracker.edu.bobjects.Passenger;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import com.netcracker.edu.util.IdGenerator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -17,7 +18,7 @@ import java.sql.Date;
  */
 public class AddPassengerCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(AddPassengerCommand.class);
-    private DAObject dao = DAObject.getInstance();
+    private DAObject dao = DAObjectFromSerializedStorage.getInstance();
 
     public AddPassengerCommand() {
         super(User.Roles.USER);

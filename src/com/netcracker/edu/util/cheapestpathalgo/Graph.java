@@ -1,4 +1,4 @@
-package com.netcracker.edu.util;
+package com.netcracker.edu.util.cheapestpathalgo;
 
 import java.util.List;
 

@@ -3,6 +3,7 @@ package com.netcracker.edu.commands;
 import com.netcracker.edu.bobjects.City;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -28,7 +29,7 @@ public class AddCityCommand extends AbstractCommand {
     @Override
     protected int execute(String[] parameters) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        DAObject dao = DAObject.getInstance();
+        DAObject dao = DAObjectFromSerializedStorage.getInstance();
         City city;
         String cityName;
         if (parameters != null && !parameters[0].isEmpty() && parameters.length == 1) {

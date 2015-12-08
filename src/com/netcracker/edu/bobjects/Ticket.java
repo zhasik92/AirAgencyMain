@@ -2,20 +2,31 @@ package com.netcracker.edu.bobjects;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Zhassulan on 20.10.2015.
  */
 public class Ticket extends HasIdObject implements Serializable {
+    private static final long serialVersionUID=-9112295186131870382L;
     private BigInteger passenger;
     private BigInteger flight;
     private boolean status;
+    private Calendar flightDate;
+    private Calendar ticketBoughtDate;
 
-    public Ticket(BigInteger id, BigInteger passenger, BigInteger flight, boolean status) {
+    public Calendar getFlightDate() {
+        return flightDate;
+    }
+
+    public Ticket(BigInteger id, BigInteger passenger, BigInteger flight,Calendar flightDate) {
         super(id);
         setPassengerId(passenger);
         setFlightId(flight);
-        this.status = status;
+        this.status = false;
+        this.flightDate=flightDate;
+        ticketBoughtDate= GregorianCalendar.getInstance();
     }
 
     public BigInteger getPassengerId() {

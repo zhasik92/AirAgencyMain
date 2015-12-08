@@ -19,7 +19,7 @@ public abstract class AbstractCommand {
 
     public int execute(String[] parameters, User user) throws IOException {
         if (user == null) {
-            throw new IllegalArgumentException("User can't be null, sign in first");
+            throw new AccessControlException("User can't be null, sign in first");
         }
         checkAccess(user.role());
         return execute(parameters);

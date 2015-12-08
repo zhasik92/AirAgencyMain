@@ -8,6 +8,7 @@ import java.sql.Time;
  *  Created by Zhassulan on 20.10.2015.
  */
 public class Flight extends HasIdObject implements Serializable{
+    private static final long serialVersionUID = -9167207054530317344L;
     private String from;
     private String to;
     private Time departureTime;
@@ -15,7 +16,7 @@ public class Flight extends HasIdObject implements Serializable{
     private String airplane;
     private double price;
 
-    public Flight(BigInteger id, String from, String to, Time departureTime, Time arrivalTime, String airplane,double price) {
+    public Flight(BigInteger id, String from, String to, Time departureTime, Time arrivalTime, String airplane, double price) {
         super(id);
         setDepartureAirportName(from);
         setArrivalAirportName(to);

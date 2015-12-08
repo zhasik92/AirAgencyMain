@@ -3,6 +3,7 @@ package com.netcracker.edu.commands;
 import com.netcracker.edu.bobjects.Flight;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import com.netcracker.edu.util.IdGenerator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -30,7 +31,7 @@ public class AddFlightCommand extends AbstractCommand {
     @Override
     protected int execute(String[] parameters) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        DAObject dao = DAObject.getInstance();
+        DAObject dao = DAObjectFromSerializedStorage.getInstance();
 
         logger.info("From:");
         String from = br.readLine();

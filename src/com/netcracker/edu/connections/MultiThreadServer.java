@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
+import java.security.AccessControlException;
 import java.util.Arrays;
 
 /**
- *  Created by Zhassulan on 29.11.2015.
+ * Created by Zhassulan on 29.11.2015.
  */
 public class MultiThreadServer implements Runnable {
     private static final Logger logger = LogManager.getLogger(MultiThreadServer.class);
@@ -35,7 +37,7 @@ public class MultiThreadServer implements Runnable {
             while ((input = in.readLine()) != null) {
                 try {
 
-                    String[] splittedCommand = input.split(" ");
+                    String[] splittedCommand = input.toLowerCase().split(" ");
                     AbstractCommand command = CommandsEngine.getInstance().getCommand(splittedCommand[0].toLowerCase());
                     int executionCode = -1;
                     if (command != null) {
@@ -52,12 +54,21 @@ public class MultiThreadServer implements Runnable {
                 } catch (IllegalArgumentException e) {
                     logger.error(e.toString());
                     out.println(1);
+                }catch (AccessControlException ace){
+                    logger.warn(ace.toString());
+                    out.println(1);
                 }
 
             }
             csocket.close();
-        } catch (IOException e) {
+        }catch (SocketException e){
+            logger.error(e.toString());
+            SecurityContextHolder.removeUserFromSignedUsers();
+        }
+        catch (IOException e) {
             e.printStackTrace();
+        }finally {
+
         }
     }
 }

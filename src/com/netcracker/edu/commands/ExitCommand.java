@@ -1,7 +1,7 @@
 package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.User;
-import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import com.netcracker.edu.persist.InMemoryStorage;
 import com.netcracker.edu.util.IdGenerator;
 import org.apache.log4j.LogManager;
@@ -29,7 +29,7 @@ public class ExitCommand extends AbstractCommand {
 
     @Override
     protected int execute(String[] parameters) throws IOException {
-        InMemoryStorage storage = DAObject.getInstance().getStorage();
+        InMemoryStorage storage = DAObjectFromSerializedStorage.getInstance().getStorage();
         FileOutputStream fos = new FileOutputStream("InMemoryStorage.out");
         logger.trace("FOS created(InMemoryStorage.out)");
         ObjectOutputStream oos = new ObjectOutputStream(fos);

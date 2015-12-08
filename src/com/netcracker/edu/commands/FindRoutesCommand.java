@@ -4,10 +4,11 @@ import com.netcracker.edu.bobjects.City;
 import com.netcracker.edu.bobjects.Flight;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
-import com.netcracker.edu.util.DijkstraAlgorithm;
-import com.netcracker.edu.util.Edge;
-import com.netcracker.edu.util.Graph;
-import com.netcracker.edu.util.Vertex;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
+import com.netcracker.edu.util.cheapestpathalgo.DijkstraAlgorithm;
+import com.netcracker.edu.util.cheapestpathalgo.Edge;
+import com.netcracker.edu.util.cheapestpathalgo.Graph;
+import com.netcracker.edu.util.cheapestpathalgo.Vertex;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -19,7 +20,7 @@ import java.util.*;
  */
 public class FindRoutesCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(FindRoutesCommand.class);
-    private static DAObject dao = DAObject.getInstance();
+    private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
     private List<Vertex> nodes;
     private List<Edge> edges;
 
@@ -44,7 +45,7 @@ public class FindRoutesCommand extends AbstractCommand {
 
     }
 
-    private void initializeNodesAndEdges() {
+    private synchronized void initializeNodesAndEdges() {
         logger.trace("initializeNodesAndEdges()");
         nodes = new LinkedList<>();
         edges = new ArrayList<>();
@@ -64,6 +65,7 @@ public class FindRoutesCommand extends AbstractCommand {
             edges.add(edge);
             logger.trace("edge has been added to edges, id = " + edge.getId());
         }
+
     }
 
     public LinkedList<Flight> getPath(String from, String to) {

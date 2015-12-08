@@ -2,6 +2,7 @@ package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import com.netcracker.edu.session.SecurityContextHolder;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.AccessControlException;
 import java.util.Arrays;
 
 /**
@@ -16,7 +18,7 @@ import java.util.Arrays;
  */
 public class SignInCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(SignInCommand.class);
-    private DAObject dao = DAObject.getInstance();
+    private DAObject dao = DAObjectFromSerializedStorage.getInstance();
 
     public SignInCommand() {
         super(User.Roles.USER);
@@ -29,6 +31,9 @@ public class SignInCommand extends AbstractCommand {
 
     @Override
     public int execute(String[] parameters, User user) throws IOException {
+        if (user != null) {
+            throw new AccessControlException("quit first");
+        }
         return execute(parameters);
     }
 
@@ -56,6 +61,7 @@ public class SignInCommand extends AbstractCommand {
             return 1;
         }
         SecurityContextHolder.setLoggedUser(user);
+
         logger.info("signed in");
         return 0;
     }

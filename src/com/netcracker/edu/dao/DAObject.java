@@ -3,180 +3,57 @@ package com.netcracker.edu.dao;
 import com.netcracker.edu.bobjects.*;
 import com.netcracker.edu.persist.InMemoryStorage;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
- * Created by Zhassulan on 23.10.2015.
+ * Created by Zhassulan on 04.12.2015.
  */
-public class DAObject {
-    private static DAObject instance;
-    private static InMemoryStorage storage;
+public interface DAObject {
+    InMemoryStorage getStorage();
 
-    private DAObject() {
-        {
-            try {
-                File file = new File("InMemoryStorage.out");
-                if (file.exists()) {
-                    FileInputStream fis = new FileInputStream(file);
-                    ObjectInputStream oin = new ObjectInputStream(fis);
-                    storage = (InMemoryStorage) oin.readObject();
-                    oin.close();
-                } else {
-                    storage = new InMemoryStorage();
-                }
-            } catch (ClassNotFoundException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    void addAirplane(Airplane airplane);
 
-    public static synchronized DAObject getInstance() {
-        if (instance == null) {
-            instance = new DAObject();
-        }
-        return instance;
-    }
+    void addCity(City city);
 
-    public InMemoryStorage getStorage() {
-        return storage;
-    }
+    void addFlight(Flight flight);
 
-    public synchronized void addAirplane(Airplane airplane) {
-        storage.getAirplanes().add(airplane);
-    }
+    void addPassenger(Passenger passenger);
 
-    public synchronized void addCity(City city) {
-        storage.getCities().add(city);
-    }
+    void addTicket(Ticket ticket);
 
-    public synchronized void addFlight(Flight flight) {
-        storage.getFlights().add(flight);
-    }
+    void addAllTickets(Collection<Ticket> tickets);
 
-    public synchronized void addPassenger(Passenger passenger) {
-        storage.getPassengers().add(passenger);
-    }
+    void addUser(User user);
 
-    public synchronized void addTicket(Ticket ticket) {
-        storage.getTickets().add(ticket);
-    }
+    Collection<Airplane> getAllAirplanes();
 
-    public synchronized void addUser(User user){
-        storage.getUsers().add(user);
-    }
+    Collection<City> getAllCities();
 
-    public Collection<Airplane> getAllAirplanes() {
-        return storage.getAirplanes();
-    }
+    Collection<Flight> getAllFlights();
 
-    public Collection<City> getAllCities() {
-        return storage.getCities();
-    }
+    Collection<Passenger> getAllPassengers();
 
-    public Collection<Flight> getAllFlights() {
-        return storage.getFlights();
-    }
+    Collection<Ticket> getAllTickets();
 
-    public Collection<Passenger> getAllPassengers() {
-        return storage.getPassengers();
-    }
+    Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId, Calendar flightDate);
 
-    public Collection<Ticket> getAllTickets() {
-        return storage.getTickets();
-    }
+    Collection<Ticket> getAllActualTicketsInFlight(BigInteger flightId, Calendar flightDate);
 
-    public Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId) {
-        Collection<Ticket> tickets = storage.getTickets();
-        HashSet<Ticket> result = new HashSet<>();
-        for (Ticket it : tickets) {
-            if (it.isCanceled()) {
-                result.add(it);
-            }
-        }
-        return result;
-    }
+    Collection<User> getAllUsers();
 
-    public Collection<Ticket> getAllActualTicketsInFlight(BigInteger flightId) {
-        Collection<Ticket> tickets = storage.getTickets();
-        HashSet<Ticket> result = new HashSet<>();
-        for (Ticket it : tickets) {
-            if (!it.isCanceled()) {
-                result.add(it);
-            }
-        }
-        return result;
-    }
+    Airplane findAirplaneByName(String airplane);
 
-    public Collection<User> getAllUsers(){
-       return storage.getUsers();
-    }
+    City findCityByName(String city);
 
-    public Airplane findAirplaneByName(String airplane) {
-        for (Airplane it : storage.getAirplanes()) {
-            if (airplane.toLowerCase().equals(it.getName().toLowerCase())) {
-                return it;
-            }
-        }
-        return null;
-    }
+    Flight findFlightById(BigInteger id);
 
-    public City findCityByName(String city) {
-        for (City it : storage.getCities()) {
-            if (city.toLowerCase().equals(it.getName().toLowerCase())) {
-                return it;
-            }
-        }
-        return null;
-    }
+    Passenger findPassengerById(BigInteger id);
 
-    public Flight findFlightById(BigInteger id) {
-        for (Flight it : storage.getFlights()) {
-            if (id.equals(it.getId())) {
-                return it;
-            }
-        }
-        return null;
-    }
+    Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship);
 
-    public Passenger findPassengerById(BigInteger id) {
-        for (Passenger it : storage.getPassengers()) {
-            if (id.equals(it.getId())) {
-                return it;
-            }
-        }
-        return null;
-    }
+    Ticket findTicketById(BigInteger id);
 
-    public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
-        for (Passenger it : storage.getPassengers()) {
-            if (passportNumber.equals(it.getPassportNumber()) && citizenship.toLowerCase().equals(it.getCitizenship().toLowerCase())) {
-                return it;
-            }
-        }
-        return null;
-    }
-
-    public Ticket findTicketById(BigInteger id) {
-        for (Ticket it : storage.getTickets()) {
-            if (id.equals(it.getId())) {
-                return it;
-            }
-        }
-        return null;
-    }
-
-    public User findUserByLogin(String login){
-        for(User it: getAllUsers()){
-            if(it.getLogin().toLowerCase().equals(login.toLowerCase())){
-                return it;
-            }
-        }
-        return null;
-    }
+    User findUserByLogin(String login);
 }

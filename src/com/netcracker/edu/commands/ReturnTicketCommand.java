@@ -3,6 +3,7 @@ package com.netcracker.edu.commands;
 import com.netcracker.edu.bobjects.Ticket;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.dao.DAObject;
+import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -14,7 +15,7 @@ import java.math.BigInteger;
  */
 public class ReturnTicketCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(ReturnTicketCommand.class);
-    private static DAObject dao = DAObject.getInstance();
+    private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
 
     public ReturnTicketCommand() {
         super(User.Roles.USER);
@@ -41,12 +42,14 @@ public class ReturnTicketCommand extends AbstractCommand {
             logger.warn("illegal argument");
             throw new IllegalArgumentException();
         }
-        Ticket ticket = dao.findTicketById(ticketId);
-        if (ticket == null||ticket.isCanceled()) {
-            logger.warn("ticket not found or already returned");
-            return 1;
+        synchronized (this) {
+            Ticket ticket = dao.findTicketById(ticketId);
+            if (ticket == null || ticket.isCanceled()) {
+                logger.warn("ticket not found or already returned");
+                return 1;
+            }
+            ticket.setStatus(true);
         }
-        ticket.setStatus(true);
         logger.info("ticket returned");
         return 0;
     }
