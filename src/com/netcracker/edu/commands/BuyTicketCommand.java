@@ -22,7 +22,7 @@ import java.util.*;
 public class BuyTicketCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(BuyTicketCommand.class);
     private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
-    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    //private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
     public BuyTicketCommand() {
         super(User.Roles.USER);
@@ -42,6 +42,7 @@ public class BuyTicketCommand extends AbstractCommand {
         Calendar flightDate = null;
         Passenger passenger;
         LinkedList<Ticket> tickets;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         try {
             if (parameters == null || parameters.length < 1) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -54,9 +55,7 @@ public class BuyTicketCommand extends AbstractCommand {
                 logger.info("Flight date(yyyy-MM-dd):");
                 buf = br.readLine();
                 flightDate = Calendar.getInstance();
-                synchronized (this) {
-                    flightDate.setTime(df.parse(buf));
-                }
+                flightDate.setTime(df.parse(buf));
                 logger.info("passport number:");
                 passport = br.readLine();
                 logger.info("citizenship:");
@@ -68,9 +67,7 @@ public class BuyTicketCommand extends AbstractCommand {
                 from = dao.findCityByName(parameters[0]);
                 to = dao.findCityByName(parameters[1]);
                 flightDate = Calendar.getInstance();
-                synchronized (this) {
-                    flightDate.setTime(df.parse(parameters[2]));
-                }
+                flightDate.setTime(df.parse(parameters[2]));
                 passport = parameters[3];
                 citizenship = parameters[4];
             }
@@ -109,7 +106,7 @@ public class BuyTicketCommand extends AbstractCommand {
         List<Calendar> flightDates = new LinkedList<>();
         Calendar currentDate = (Calendar) flightDate.clone();
         Flight temp = path.getFirst();
-        synchronized (this) {
+        synchronized (path) {
             for (Flight it : path) {
                 if (temp.getArrivalTime().compareTo(it.getDepartureTime()) > 0) {
                     flightDate.add(Calendar.DATE, 1);

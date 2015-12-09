@@ -42,12 +42,12 @@ public class ReturnTicketCommand extends AbstractCommand {
             logger.warn("illegal argument");
             throw new IllegalArgumentException();
         }
+        Ticket ticket = dao.findTicketById(ticketId);
+        if (ticket == null || ticket.isCanceled()) {
+            logger.warn("ticket not found or already returned");
+            return 1;
+        }
         synchronized (this) {
-            Ticket ticket = dao.findTicketById(ticketId);
-            if (ticket == null || ticket.isCanceled()) {
-                logger.warn("ticket not found or already returned");
-                return 1;
-            }
             ticket.setStatus(true);
         }
         logger.info("ticket returned");

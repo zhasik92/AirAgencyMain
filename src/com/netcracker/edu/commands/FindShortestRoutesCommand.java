@@ -27,8 +27,9 @@ import java.util.List;
 public class FindShortestRoutesCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(FindShortestRoutesCommand.class);
     private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
-    private HashComparator comp;
-    Dictionary airportToVertex;
+    private static HashComparator comp;
+    private static Dictionary airportToVertex;
+    private static Graph graph;
 
     public FindShortestRoutesCommand() {
         super(User.Roles.USER);
@@ -46,7 +47,7 @@ public class FindShortestRoutesCommand extends AbstractCommand {
             throw new IllegalArgumentException("required 3 arguments");
         }
 
-       List<com.netcracker.edu.bobjects.Flight> path= getPath(parameters[0],parameters[1],parameters[2]);
+        List<com.netcracker.edu.bobjects.Flight> path = getPath(parameters[0], parameters[1], parameters[2]);
 /*
         DijkstraAlgorithm2 alg = new DijkstraAlgorithm2();
 
@@ -62,10 +63,10 @@ public class FindShortestRoutesCommand extends AbstractCommand {
                     + ((Flight) it.element()).depTime + ((Flight) it.element()).destAirport +
                     " " + ((Flight) it.element()).arrTime);
         }*/
-        for (com.netcracker.edu.bobjects.Flight it:path){
-            logger.info(it.getId()+" "+ it.getDepartureAirportName()
-                    +" "+it.getArrivalAirportName()+" "+it.getDepartureTime()+
-                    " "+it.getArrivalTime()+", price =" +it.getPrice());
+        for (com.netcracker.edu.bobjects.Flight it : path) {
+            logger.info(it.getId() + " " + it.getDepartureAirportName()
+                    + " " + it.getArrivalAirportName() + " " + it.getDepartureTime() +
+                    " " + it.getArrivalTime() + ", price =" + it.getPrice());
         }
         return 0;
     }
@@ -73,14 +74,19 @@ public class FindShortestRoutesCommand extends AbstractCommand {
     public synchronized List<com.netcracker.edu.bobjects.Flight> getPath(String from, String to, String time) {
         logger.trace("getPath()");
         DijkstraAlgorithm2 alg = new DijkstraAlgorithm2();
-        alg.execute(initializeGraph(),
+
+            if (graph == null || airportToVertex == null || comp == null) {
+                graph = initializeGraph();
+            }
+
+        alg.execute(graph,
                 (Vertex) airportToVertex.find(from).element(),
                 (Vertex) airportToVertex.find(to).element(),
                 TimeTable.parseTime(time));
-        EdgeIterator pathIterator=alg.reportPath();
-        List<com.netcracker.edu.bobjects.Flight> result=new LinkedList<>();
-        while(pathIterator.hasNext()){
-            result.add(dao.findFlightById(BigInteger.valueOf(Long.parseLong(((Flight)pathIterator.nextEdge().element()).name))));
+        EdgeIterator pathIterator = alg.reportPath();
+        List<com.netcracker.edu.bobjects.Flight> result = new LinkedList<>();
+        while (pathIterator.hasNext()) {
+            result.add(dao.findFlightById(BigInteger.valueOf(Long.parseLong(((Flight) pathIterator.nextEdge().element()).name))));
         }
 
         return result;
@@ -92,7 +98,9 @@ public class FindShortestRoutesCommand extends AbstractCommand {
     }
 
     private synchronized Graph initializeGraph() {
-        IncidenceListGraph graph = new IncidenceListGraph();
+        System.out.println("shortest initializeGraph()");
+
+        graph = new IncidenceListGraph();
         comp = new jdsl.core.ref.ObjectHashComparator();
         airportToVertex = new jdsl.core.ref.HashtableDictionary(comp);
 

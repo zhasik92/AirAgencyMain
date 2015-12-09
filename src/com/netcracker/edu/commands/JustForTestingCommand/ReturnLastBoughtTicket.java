@@ -1,5 +1,6 @@
 package com.netcracker.edu.commands.JustForTestingCommand;
 
+import com.netcracker.edu.bobjects.Ticket;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.commands.AbstractCommand;
 import com.netcracker.edu.commands.CommandsEngine;
@@ -32,18 +33,25 @@ public class ReturnLastBoughtTicket extends AbstractCommand {
             throw new AccessControlException("access denied");
         }
         if (parameters[0].equals("all")) {
-            BigInteger max = BigInteger.ZERO;
-            synchronized (this) {
-                Set<BigInteger> tickets = user.getTickets();
-                for (BigInteger it : tickets) {
+            Set<BigInteger> tickets = user.getTickets();
+            Ticket buf;
+            for (BigInteger it : tickets) {
+                if ((buf = dao.findTicketById(it)) != null) {
+                    synchronized (buf) {
+                        buf.setStatus(true);
+                    }
+                }
+
+                /*for (BigInteger it : tickets) {
                     String[] strings = {it.toString()};
                     CommandsEngine.getInstance().getCommand("return").execute(strings, user);
-                }
+                }*/
             }
+            return 0;
         } else {
             BigInteger max = BigInteger.ZERO;
-            synchronized (this) {
-                Set<BigInteger> tickets = user.getTickets();
+            Set<BigInteger> tickets = user.getTickets();
+            synchronized (user.getTickets()) {
                 for (BigInteger it : tickets) {
                     if (it.compareTo(max) > 0) {
                         max = it;
@@ -54,7 +62,6 @@ public class ReturnLastBoughtTicket extends AbstractCommand {
 
             return CommandsEngine.getInstance().getCommand("return").execute(strings, user);
         }
-        return -1;
     }
 
     @Override

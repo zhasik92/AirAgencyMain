@@ -24,7 +24,6 @@ import java.util.List;
 public class BuyTicketToShortestRouteCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(FindRoutesCommand.class);
     private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
-    private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
     public BuyTicketToShortestRouteCommand() {
         super(User.Roles.USER);
@@ -44,6 +43,7 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
         Passenger passenger;
         Calendar flightDate = Calendar.getInstance();
         List<Ticket> tickets;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         try {
             if (parameters == null || parameters.length < 1) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -58,18 +58,18 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
                 logger.info("citizenship:");
                 citizenship = br.readLine();
                 logger.info("FlightDate(yyyy-MM-dd):");
-                synchronized (this) {
+
                     flightDate.setTime(df.parse(br.readLine()));
-                }
+
             } else {
                 if (parameters.length != 5) {
                     throw new IllegalArgumentException("required 5 parameters");
                 }
                 from = dao.findCityByName(parameters[0]);
                 to = dao.findCityByName(parameters[1]);
-                synchronized (this) {
+
                     flightDate.setTime(df.parse(parameters[2]));
-                }
+
                 passport = parameters[3];
                 citizenship = parameters[4];
             }
@@ -107,7 +107,7 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
         List<Calendar> flightDates = new LinkedList<>();
         Calendar currentDate = (Calendar) flightDate.clone();
         Flight temp = path.get(0);
-        synchronized (this) {
+        synchronized (path) {
             for (Flight it : path) {
                 if (temp.getArrivalTime().compareTo(it.getDepartureTime()) > 0) {
                     flightDate.add(Calendar.DATE, 1);

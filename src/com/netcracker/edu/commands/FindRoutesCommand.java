@@ -47,6 +47,7 @@ public class FindRoutesCommand extends AbstractCommand {
 
     private synchronized void initializeNodesAndEdges() {
         logger.trace("initializeNodesAndEdges()");
+        System.out.println("initializeNodesAndEdges()");
         nodes = new LinkedList<>();
         edges = new ArrayList<>();
         Map<String, Vertex> tempNodes = new HashMap<>();
