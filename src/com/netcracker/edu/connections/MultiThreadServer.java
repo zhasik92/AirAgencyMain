@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.file.AccessDeniedException;
 import java.security.AccessControlException;
 import java.util.Arrays;
 
@@ -54,7 +55,7 @@ public class MultiThreadServer implements Runnable {
                 } catch (IllegalArgumentException e) {
                     logger.error(e.toString());
                     out.println(1);
-                }catch (AccessControlException ace){
+                }catch (AccessControlException|AccessDeniedException ace){
                     logger.warn(ace.toString());
                     out.println(1);
                 }

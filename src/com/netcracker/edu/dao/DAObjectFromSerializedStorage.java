@@ -11,6 +11,8 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Created by Zhassulan on 23.10.2015.
@@ -18,6 +20,30 @@ import java.util.HashSet;
 public class DAObjectFromSerializedStorage implements DAObject {
     private static DAObject instance;
     private static InMemoryStorage storage;
+
+    private ReentrantReadWriteLock airplanesRWL=new ReentrantReadWriteLock();
+    private Lock airplanesRL=airplanesRWL.readLock();
+    private Lock airplanesWL=airplanesRWL.writeLock();
+
+    private ReentrantReadWriteLock citiesRWL=new ReentrantReadWriteLock();
+    private Lock citiesRL=citiesRWL.readLock();
+    private Lock citiesWL=citiesRWL.writeLock();
+
+    private ReentrantReadWriteLock flightsRWL=new ReentrantReadWriteLock();
+    private Lock flightsRL=flightsRWL.readLock();
+    private Lock flightsWL=flightsRWL.writeLock();
+
+    private ReentrantReadWriteLock passengersRWL=new ReentrantReadWriteLock();
+    private Lock passengersRL=passengersRWL.readLock();
+    private Lock passengersWL=passengersRWL.writeLock();
+
+    private ReentrantReadWriteLock ticketsRWL = new ReentrantReadWriteLock();
+    private Lock ticketsRL = ticketsRWL.readLock();
+    private Lock ticketWL = ticketsRWL.writeLock();
+
+    private ReentrantReadWriteLock usersRWL=new ReentrantReadWriteLock();
+    private Lock usersRL=usersRWL.readLock();
+    private Lock usersWL=usersRWL.writeLock();
 
     private DAObjectFromSerializedStorage() {
         {
@@ -51,92 +77,155 @@ public class DAObjectFromSerializedStorage implements DAObject {
 
     @Override
     public void addAirplane(Airplane airplane) {
-        synchronized (storage.getAirplanes()) {
+        airplanesWL.lock();
+        try {
+            //synchronized (storage.getAirplanes()) {
             storage.getAirplanes().add(airplane);
+            //}
+        }finally {
+            airplanesWL.unlock();
         }
     }
 
     @Override
-    public  void addCity(City city) {
-        synchronized (storage.getCities()) {
+    public void addCity(City city) {
+        citiesWL.lock();
+        try{
+        //synchronized (storage.getCities()) {
             storage.getCities().add(city);
+        //}
+    }finally {
+            citiesWL.unlock();
         }
     }
 
     @Override
-    public  void addFlight(Flight flight) {
-        synchronized (storage.getFlights()) {
+    public void addFlight(Flight flight) {
+      //  synchronized (storage.getFlights()) {
+        flightsWL.lock();
+        try {
             storage.getFlights().add(flight);
+            //   }
+        }finally {
+            flightsWL.unlock();
         }
     }
 
     @Override
-    public  void addPassenger(Passenger passenger) {
-        synchronized (storage.getPassengers()) {
+    public void addPassenger(Passenger passenger) {
+       // synchronized (storage.getPassengers()) {
+        passengersWL.lock();
+        try {
             storage.getPassengers().add(passenger);
+            //  }
+        }finally {
+            passengersWL.unlock();
         }
     }
 
     @Override
-    public  void addTicket(Ticket ticket) {
-        synchronized (storage.getTickets()) {
+    public void addTicket(Ticket ticket) {
+        //synchronized (storage.getTickets()) {
+        ticketWL.lock();
+        try {
             storage.getTickets().add(ticket);
+            //}
+        } finally {
+            ticketWL.unlock();
         }
+
     }
 
-    public  void addAllTickets(Collection<Ticket> tickets) {
-        synchronized (storage.getTickets()) {
+    public void addAllTickets(Collection<Ticket> tickets) {
+        // synchronized (storage.getTickets()) {
+        ticketWL.lock();
+        try {
             storage.getTickets().addAll(tickets);
+            //  }
+        } finally {
+            ticketWL.unlock();
         }
     }
 
     @Override
-    public  void addUser(User user) {
-        synchronized (storage.getUsers()) {
+    public void addUser(User user) {
+        //synchronized (storage.getUsers()) {
+          usersWL.lock();
+        try {
             storage.getUsers().add(user);
+            //}
+        }finally {
+            usersWL.unlock();
         }
     }
 
     @Override
-    public  Collection<Airplane> getAllAirplanes() {
-        synchronized (storage.getAirplanes()) {
+    public Collection<Airplane> getAllAirplanes() {
+       // synchronized (storage.getAirplanes()) {
+        airplanesRL.lock();
+        try {
             return storage.getAirplanes();
+            //}
+        }finally {
+            airplanesRL.unlock();
         }
     }
 
     @Override
-    public  Collection<City> getAllCities() {
-        synchronized (storage.getCities()) {
+    public Collection<City> getAllCities() {
+        //    synchronized (storage.getCities()) {
+        citiesRL.lock();
+        try {
             return storage.getCities();
+            //}
+        }finally {
+            citiesRL.unlock();
         }
     }
 
     @Override
-    public  Collection<Flight> getAllFlights() {
-        synchronized (storage.getFlights()) {
+    public Collection<Flight> getAllFlights() {
+        // synchronized (storage.getFlights()) {
+        flightsRL.lock();
+        try {
             return storage.getFlights();
+            // }
+        }finally {
+            flightsRL.unlock();
         }
     }
 
     @Override
-    public  Collection<Passenger> getAllPassengers() {
-        synchronized (storage.getPassengers()) {
+    public Collection<Passenger> getAllPassengers() {
+        //  synchronized (storage.getPassengers()) {
+        passengersRL.lock();
+        try {
             return storage.getPassengers();
+        }finally {
+            passengersRL.unlock();
         }
+        //  }
     }
 
     @Override
-    public  Collection<Ticket> getAllTickets() {
-        synchronized (storage.getTickets()) {
+    public Collection<Ticket> getAllTickets() {
+        ticketsRL.lock();
+        //  synchronized (storage.getTickets()) {
+        try {
             return storage.getTickets();
+            // }
+        } finally {
+            ticketsRL.unlock();
         }
     }
 
     @Override
-    public  Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId, Calendar date) {
+    public Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId, Calendar date) {
         HashSet<Ticket> result = new HashSet<>();
         Collection<Ticket> tickets = storage.getTickets();
-        synchronized (tickets) {
+        //  synchronized (tickets) {
+        ticketsRL.lock();
+        try {
             for (Ticket it : tickets) {
                 if (it.getFlightId().equals(flightId) &&
                         it.getFlightDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
@@ -146,15 +235,20 @@ public class DAObjectFromSerializedStorage implements DAObject {
                     result.add(it);
                 }
             }
+        } finally {
+            ticketsRL.unlock();
         }
+        //}
         return result;
     }
 
     @Override
-    public  Collection<Ticket> getAllActualTicketsInFlight(BigInteger flightId, Calendar date) {
+    public Collection<Ticket> getAllActualTicketsInFlight(BigInteger flightId, Calendar date) {
         HashSet<Ticket> result = new HashSet<>();
         Collection<Ticket> tickets = storage.getTickets();
-        synchronized (storage.getTickets()) {
+        //    synchronized (storage.getTickets()) {
+        ticketsRL.lock();
+        try {
             for (Ticket it : tickets) {
                 if (it.getFlightId().equals(flightId) &&
                         it.getFlightDate().get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
@@ -164,100 +258,139 @@ public class DAObjectFromSerializedStorage implements DAObject {
                     result.add(it);
                 }
             }
+        } finally {
+            ticketsRL.unlock();
         }
+
+        //  }
         return result;
     }
 
     @Override
-    public  Collection<User> getAllUsers() {
-        synchronized (storage.getUsers()) {
+    public Collection<User> getAllUsers() {
+        //  synchronized (storage.getUsers()) {
+        usersRL.lock();
+        try {
             return storage.getUsers();
+            //  }
+        }finally {
+            usersRL.unlock();
         }
     }
 
     @Override
-    public  Airplane findAirplaneByName(String airplane) {
+    public Airplane findAirplaneByName(String airplane) {
         String lowerCaseAirplane = airplane.toLowerCase();
-        synchronized (storage.getAirplanes()) {
-            for (Airplane it : storage.getAirplanes()) {
-                if (lowerCaseAirplane.equals(it.getName().toLowerCase())) {
-                    return it;
-                }
+        //  synchronized (storage.getAirplanes()) {
+        airplanesRL.lock();
+        try{
+        for (Airplane it : storage.getAirplanes()) {
+            if (lowerCaseAirplane.equals(it.getName().toLowerCase())) {
+                return it;
             }
+        }}finally {
+            airplanesRL.unlock();
         }
+        //}
         return null;
     }
 
     @Override
-    public  City findCityByName(String city) {
+    public City findCityByName(String city) {
         String lowerCaseCity = city.toLowerCase();
-        synchronized (storage.getCities()) {
-            for (City it : storage.getCities()) {
-                if (lowerCaseCity.equals(it.getName().toLowerCase())) {
-                    return it;
-                }
+        //synchronized (storage.getCities()) {
+        citiesRL.lock();
+        try{
+        for (City it : storage.getCities()) {
+            if (lowerCaseCity.equals(it.getName().toLowerCase())) {
+                return it;
             }
+        }}finally {
+            citiesRL.unlock();
         }
+        //}
         return null;
     }
 
     @Override
-    public  Flight findFlightById(BigInteger id) {
-        synchronized (storage.getFlights()) {
-            for (Flight it : storage.getFlights()) {
-                if (id.equals(it.getId())) {
-                    return it;
-                }
+    public Flight findFlightById(BigInteger id) {
+        //synchronized (storage.getFlights()) {
+        flightsRL.lock();
+        try{
+        for (Flight it : storage.getFlights()) {
+            if (id.equals(it.getId())) {
+                return it;
             }
+        }}finally {
+            flightsRL.unlock();
         }
+        // }
         return null;
     }
 
     @Override
-    public  Passenger findPassengerById(BigInteger id) {
-        synchronized (storage.getPassengers()) {
-            for (Passenger it : storage.getPassengers()) {
-                if (id.equals(it.getId())) {
-                    return it;
-                }
+    public Passenger findPassengerById(BigInteger id) {
+        // synchronized (storage.getPassengers()) {
+        passengersRL.lock();
+        try{
+        for (Passenger it : storage.getPassengers()) {
+            if (id.equals(it.getId())) {
+                return it;
             }
+        }}finally {
+            passengersRL.unlock();
         }
+        // }
         return null;
     }
 
     @Override
-    public  Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
-        synchronized (storage.getPassengers()) {
-            for (Passenger it : storage.getPassengers()) {
-                if (passportNumber.equals(it.getPassportNumber()) && citizenship.toLowerCase().equals(it.getCitizenship().toLowerCase())) {
-                    return it;
-                }
+    public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
+        //    synchronized (storage.getPassengers()) {
+        passengersRL.lock();
+        try{
+        for (Passenger it : storage.getPassengers()) {
+            if (passportNumber.equals(it.getPassportNumber()) && citizenship.toLowerCase().equals(it.getCitizenship().toLowerCase())) {
+                return it;
             }
+        }}finally {
+            passengersRL.unlock();
         }
+        //   }
         return null;
     }
 
     @Override
-    public  Ticket findTicketById(BigInteger id) {
-        synchronized (storage.getTickets()) {
+    public Ticket findTicketById(BigInteger id) {
+        //    synchronized (storage.getTickets()) {
+        ticketsRL.lock();
+        try {
             for (Ticket it : storage.getTickets()) {
                 if (id.equals(it.getId())) {
                     return it;
                 }
             }
+        } finally {
+            ticketsRL.unlock();
         }
+        //   }
         return null;
     }
 
     @Override
     public User findUserByLogin(String login) {
-        synchronized (getAllUsers()) {
-            for (User it : getAllUsers()) {
-                if (it.getLogin().toLowerCase().equals(login.toLowerCase())) {
-                    return it;
-                }
+        String loginInLowerCase=login.toLowerCase();
+        //      synchronized (getAllUsers()) {
+        usersRL.lock();
+        try{
+        for (User it : getAllUsers()) {
+            if (it.getLogin().toLowerCase().equals(loginInLowerCase)) {
+                return it;
             }
+        }}finally {
+            usersRL.unlock();
         }
+        //      }
         return null;
     }
 }

@@ -26,6 +26,7 @@ public class FindRoutesCommand extends AbstractCommand {
 
     public FindRoutesCommand() {
         super(User.Roles.USER);
+        initializeNodesAndEdges();
     }
 
     @Override
@@ -76,10 +77,6 @@ public class FindRoutesCommand extends AbstractCommand {
         }
         LinkedList<Flight> flights = new LinkedList<>();
         Map<String, Vertex> tempNodes = new HashMap<>();
-
-        if (nodes == null || edges == null) {
-            initializeNodesAndEdges();
-        }
 
         for (Vertex it : nodes) {
             tempNodes.put(it.getId(), it);

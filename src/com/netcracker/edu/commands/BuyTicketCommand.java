@@ -22,7 +22,6 @@ import java.util.*;
 public class BuyTicketCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(BuyTicketCommand.class);
     private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
-    //private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
     public BuyTicketCommand() {
         super(User.Roles.USER);
@@ -106,7 +105,7 @@ public class BuyTicketCommand extends AbstractCommand {
         List<Calendar> flightDates = new LinkedList<>();
         Calendar currentDate = (Calendar) flightDate.clone();
         Flight temp = path.getFirst();
-        synchronized (path) {
+        synchronized (dao.getAllTickets()) {
             for (Flight it : path) {
                 if (temp.getArrivalTime().compareTo(it.getDepartureTime()) > 0) {
                     flightDate.add(Calendar.DATE, 1);
@@ -133,7 +132,7 @@ public class BuyTicketCommand extends AbstractCommand {
                 SecurityContextHolder.getLoggedHolder().addTicket(ticket.getId());
                 logger.trace("ticket saved");
             }
-        }
+       }
         return currentTickets;
     }
 

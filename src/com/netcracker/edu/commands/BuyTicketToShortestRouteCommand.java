@@ -107,7 +107,7 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
         List<Calendar> flightDates = new LinkedList<>();
         Calendar currentDate = (Calendar) flightDate.clone();
         Flight temp = path.get(0);
-        synchronized (path) {
+        synchronized (dao.getAllTickets()) {
             for (Flight it : path) {
                 if (temp.getArrivalTime().compareTo(it.getDepartureTime()) > 0) {
                     flightDate.add(Calendar.DATE, 1);

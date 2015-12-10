@@ -27,12 +27,13 @@ import java.util.List;
 public class FindShortestRoutesCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(FindShortestRoutesCommand.class);
     private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
-    private static HashComparator comp;
-    private static Dictionary airportToVertex;
-    private static Graph graph;
+    private /*static*/ HashComparator comp;
+    private /*static*/ Dictionary airportToVertex;
+    private /*static*/ Graph graph;
 
     public FindShortestRoutesCommand() {
         super(User.Roles.USER);
+        graph = initializeGraph();
     }
 
     @Override
@@ -48,21 +49,6 @@ public class FindShortestRoutesCommand extends AbstractCommand {
         }
 
         List<com.netcracker.edu.bobjects.Flight> path = getPath(parameters[0], parameters[1], parameters[2]);
-/*
-        DijkstraAlgorithm2 alg = new DijkstraAlgorithm2();
-
-        alg.execute(initializeGraph(),
-                (Vertex) airportToVertex.find(parameters[0]).element(),
-                (Vertex) airportToVertex.find(parameters[1]).element(), TimeTable.parseTime(parameters[2]));
-
-        EdgeIterator pathIterator = alg.reportPath();
-        while (pathIterator.hasNext()) {
-            Edge it = pathIterator.nextEdge();
-
-            logger.info(((Flight) it.element()).srcAirport + " " + " "
-                    + ((Flight) it.element()).depTime + ((Flight) it.element()).destAirport +
-                    " " + ((Flight) it.element()).arrTime);
-        }*/
         for (com.netcracker.edu.bobjects.Flight it : path) {
             logger.info(it.getId() + " " + it.getDepartureAirportName()
                     + " " + it.getArrivalAirportName() + " " + it.getDepartureTime() +
@@ -71,19 +57,22 @@ public class FindShortestRoutesCommand extends AbstractCommand {
         return 0;
     }
 
-    public synchronized List<com.netcracker.edu.bobjects.Flight> getPath(String from, String to, String time) {
+    public List<com.netcracker.edu.bobjects.Flight> getPath(String from, String to, String time) {
         logger.trace("getPath()");
+        int parsedTime = TimeTable.parseTime(time);
         DijkstraAlgorithm2 alg = new DijkstraAlgorithm2();
+        EdgeIterator pathIterator;
 
-            if (graph == null || airportToVertex == null || comp == null) {
-                graph = initializeGraph();
-            }
-
-        alg.execute(graph,
-                (Vertex) airportToVertex.find(from).element(),
-                (Vertex) airportToVertex.find(to).element(),
-                TimeTable.parseTime(time));
-        EdgeIterator pathIterator = alg.reportPath();
+        Vertex fromVertex;
+        Vertex toVertex;
+        //synchronized (airportToVertex) {
+            fromVertex = (Vertex) airportToVertex.find(from).element();
+            toVertex = (Vertex) airportToVertex.find(to).element();
+     //   }
+        synchronized (graph) {
+            alg.execute(graph, fromVertex, toVertex, parsedTime);
+        }
+        pathIterator = alg.reportPath();
         List<com.netcracker.edu.bobjects.Flight> result = new LinkedList<>();
         while (pathIterator.hasNext()) {
             result.add(dao.findFlightById(BigInteger.valueOf(Long.parseLong(((Flight) pathIterator.nextEdge().element()).name))));
