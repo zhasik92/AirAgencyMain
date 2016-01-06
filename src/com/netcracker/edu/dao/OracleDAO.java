@@ -50,6 +50,10 @@ public class OracleDAO implements DAObject {
         try {
             st = conn.createStatement();
             st.executeQuery("INSERT INTO AIRPLANE (NAME,CAPACITY) VALUES ('" + airplane.getName() + "', '" + airplane.getCapacity() + "')");
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            conn.rollback();
+            throw sqle;
         } finally {
             if (st != null) {
                 st.close();
@@ -66,6 +70,10 @@ public class OracleDAO implements DAObject {
         try {
             st = conn.createStatement();
             st.executeQuery("INSERT INTO CITIES (NAME) VALUES ('" + city.getName() + "')");
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            conn.rollback();
+            throw sqle;
         } finally {
             if (st != null) {
                 st.close();
@@ -85,6 +93,10 @@ public class OracleDAO implements DAObject {
                     "('" + flight.getId() + "', '" + flight.getDepartureAirportName() + "', '" + flight.getArrivalAirportName() + "',TO_TIMESTAMP( '" +
                     timeFormat.format(flight.getDepartureTime()) + "','HH24:MI:SS'),TO_TIMESTAMP( '" + timeFormat.format(flight.getArrivalTime()) + "','HH24:MI:SS'), '" + flight.getAirplaneName() + "', " +
                     flight.getPrice() + ")");
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            conn.rollback();
+            throw sqle;
         } finally {
             if (st != null) {
                 st.close();
@@ -104,6 +116,10 @@ public class OracleDAO implements DAObject {
                     " VALUES (" + passenger.getId() + ", '" + passenger.getEmail() + "', '" + passenger.getFirstName() + "', '" +
                     passenger.getLastName() + "', TO_DATE('" + dateFormat.format(passenger.getDateOfBirth()) + "','YYYY-MM-DD'), '" + passenger.getPassportNumber()
                     + "', '" + passenger.getCitizenship() + "')");
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            conn.rollback();
+            throw sqle;
         } finally {
             if (st != null) {
                 st.close();
@@ -124,6 +140,10 @@ public class OracleDAO implements DAObject {
                     (ticket.isCanceled() ? 1 : 0) + "'," +
                     "TO_TIMESTAMP('" + new Timestamp(ticket.getFlightDate().getTime().getTime()) + "','YYYY-MM-DD'), " +
                     "TO_TIMESTAMP('" + new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()) + "','YYYY-MM-DD'))");
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            conn.rollback();
+            throw sqle;
         } finally {
             if (st != null) {
                 st.close();
@@ -148,6 +168,10 @@ public class OracleDAO implements DAObject {
                         "TO_TIMESTAMP('" + new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()) + "','YYYY-MM-DD HH24:MI:SS.FF'))");
             }
             conn.commit();
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            conn.rollback();
+            throw sqle;
         } finally {
             if (st != null) {
                 st.close();
