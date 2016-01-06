@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 /**
  * Created by Zhassulan on 20.10.2015.
  */
-public abstract class NamedObject implements Serializable {
+public abstract class NamedObject extends BusinessObject implements Serializable {
     private String name;
 
     public NamedObject(String name) {

@@ -1,22 +1,17 @@
 package com.netcracker.edu.commands.JustForTestingCommand;
 
-import com.netcracker.edu.bobjects.Ticket;
 import com.netcracker.edu.bobjects.User;
 import com.netcracker.edu.commands.AbstractCommand;
-import com.netcracker.edu.commands.CommandsEngine;
+import com.netcracker.edu.dao.DAOFactory;
 import com.netcracker.edu.dao.DAObject;
-import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.AccessControlException;
-import java.util.Set;
 
 /**
  * Created by Zhassulan on 04.12.2015.
  */
 public class ReturnLastBoughtTicket extends AbstractCommand {
-    private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
+    private static DAObject dao = DAOFactory.getDAObject();
 
     public ReturnLastBoughtTicket() {
         super(User.Roles.USER);
@@ -29,23 +24,28 @@ public class ReturnLastBoughtTicket extends AbstractCommand {
 
     @Override
     public int execute(String[] parameters, User user) throws IOException {
-        if (user == null) {
+        throw new IOException("return ticket command");
+        /*if (user == null) {
             throw new AccessControlException("access denied");
         }
         if (parameters[0].equals("all")) {
             Set<BigInteger> tickets = user.getTickets();
             Ticket buf;
             for (BigInteger it : tickets) {
+                try{
                 if ((buf = dao.findTicketById(it)) != null) {
-                    synchronized (buf) {
+                    synchronized (this) {
                         buf.setStatus(true);
                     }
+                }}catch (SQLException e){
+                    e.printStackTrace();
+                    return -1;
                 }
 
-                /*for (BigInteger it : tickets) {
+                *//*for (BigInteger it : tickets) {
                     String[] strings = {it.toString()};
                     CommandsEngine.getInstance().getCommand("return").execute(strings, user);
-                }*/
+                }*//*
             }
             return 0;
         } else {
@@ -61,7 +61,7 @@ public class ReturnLastBoughtTicket extends AbstractCommand {
             String[] strings = {max.toString()};
 
             return CommandsEngine.getInstance().getCommand("return").execute(strings, user);
-        }
+        }*/
     }
 
     @Override

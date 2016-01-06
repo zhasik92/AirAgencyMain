@@ -11,7 +11,7 @@ import java.sql.Time;
 public class TimeTable {
 
     // Compute the difference between times a and b, taking into account
-    // the possiblity of crossing days.
+    // the possibility of crossing days.
     public static int diff(int a, int b) {
         int result = (a - b) % 1440;
 

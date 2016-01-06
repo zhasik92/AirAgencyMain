@@ -6,14 +6,15 @@ import java.io.IOException;
 import java.security.AccessControlException;
 
 /**
+ * Abstract Command
  * Created by Zhassulan on 23.10.2015.
  */
 public abstract class AbstractCommand {
-    protected final User.Roles role;
+    private final User.Roles role;
 
     public abstract String getName();
 
-    public AbstractCommand(User.Roles role) {
+    protected AbstractCommand(User.Roles role) {
         this.role = role;
     }
 
@@ -29,9 +30,9 @@ public abstract class AbstractCommand {
 
     public abstract String getHelp();
 
-    protected void checkAccess(User.Roles role) {
+    private void checkAccess(User.Roles role) {
         if (this.role.compareTo(role) > 0) {
-            throw new AccessControlException("acces denied");
+            throw new AccessControlException("access denied");
         }
     }
 }

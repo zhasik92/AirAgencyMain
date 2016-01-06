@@ -3,7 +3,6 @@ package com.netcracker.edu.bobjects;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Zhassulan on 20.10.2015.
@@ -16,18 +15,24 @@ public class Ticket extends HasIdObject implements Serializable {
     private Calendar flightDate;
     private Calendar ticketBoughtDate;
 
-    public Calendar getFlightDate() {
-        return flightDate;
-    }
-
-    public Ticket(BigInteger id, BigInteger passenger, BigInteger flight,Calendar flightDate) {
+    public Ticket(BigInteger id, BigInteger passenger, BigInteger flight,Calendar flightDate, Calendar ticketBoughtDate) {
         super(id);
         setPassengerId(passenger);
         setFlightId(flight);
         this.status = false;
         this.flightDate=flightDate;
-        ticketBoughtDate= GregorianCalendar.getInstance();
+        this.ticketBoughtDate=ticketBoughtDate;
     }
+
+    public Ticket(BigInteger id, BigInteger passenger, BigInteger flight,boolean status,Calendar flightDate, Calendar ticketBoughtDate) {
+        super(id);
+        setPassengerId(passenger);
+        setFlightId(flight);
+        this.status = status;
+        this.flightDate=flightDate;
+        this.ticketBoughtDate=ticketBoughtDate;
+    }
+
 
     public BigInteger getPassengerId() {
         return passenger;
@@ -57,5 +62,13 @@ public class Ticket extends HasIdObject implements Serializable {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public Calendar getTicketBoughtDate() {
+        return ticketBoughtDate;
+    }
+
+    public Calendar getFlightDate() {
+        return flightDate;
     }
 }

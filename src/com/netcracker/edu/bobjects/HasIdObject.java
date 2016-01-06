@@ -7,7 +7,7 @@ import java.math.BigInteger;
 /**
  * Created by Zhassulan on 20.10.2015.
  */
-public abstract class HasIdObject implements Serializable {
+public abstract class HasIdObject extends BusinessObject implements Serializable {
     private BigInteger id;
 
     public HasIdObject(BigInteger id) {
@@ -73,7 +73,7 @@ public abstract class HasIdObject implements Serializable {
                 result.append(newLine);
             }
         } catch (IllegalAccessException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
 
         return result.toString();

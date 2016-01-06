@@ -4,7 +4,7 @@ package com.netcracker.edu.bobjects;
 import java.io.Serializable;
 
 /**
- *  Created by Zhassulan on 20.10.2015.
+ * Created by Zhassulan on 20.10.2015.
  */
 public class Airplane extends NamedObject implements Serializable {
     private int capacity;
@@ -18,9 +18,9 @@ public class Airplane extends NamedObject implements Serializable {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    private void setCapacity(int capacity) {
         if (capacity < 1) {
-            throw new IllegalArgumentException("Capasity can't be negative");
+            throw new IllegalArgumentException("Capacity can't be negative");
         }
         this.capacity = capacity;
     }

@@ -1,8 +1,8 @@
 package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.*;
+import com.netcracker.edu.dao.DAOFactory;
 import com.netcracker.edu.dao.DAObject;
-import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import com.netcracker.edu.session.SecurityContextHolder;
 import com.netcracker.edu.util.IdGenerator;
 import org.apache.log4j.LogManager;
@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,11 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Command
  * Created by Zhassulan on 07.12.2015.
  */
 public class BuyTicketToShortestRouteCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(FindRoutesCommand.class);
-    private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
+    private static DAObject dao = DAOFactory.getDAObject();
 
     public BuyTicketToShortestRouteCommand() {
         super(User.Roles.USER);
@@ -59,7 +61,7 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
                 citizenship = br.readLine();
                 logger.info("FlightDate(yyyy-MM-dd):");
 
-                    flightDate.setTime(df.parse(br.readLine()));
+                flightDate.setTime(df.parse(br.readLine()));
 
             } else {
                 if (parameters.length != 5) {
@@ -68,36 +70,37 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
                 from = dao.findCityByName(parameters[0]);
                 to = dao.findCityByName(parameters[1]);
 
-                    flightDate.setTime(df.parse(parameters[2]));
+                flightDate.setTime(df.parse(parameters[2]));
 
                 passport = parameters[3];
                 citizenship = parameters[4];
             }
+            passenger = dao.findPassengerByPassportNumberAndCitizenship(passport, citizenship);
+            if (passenger == null) {
+                throw new IllegalArgumentException("wrong passport number or citizenship or passenger haven't registered");
+            }
+            if (from == null || to == null) {
+                logger.warn("illegal cities");
+                return 1;
+            }
+            tickets = buyTicket(passenger, from, to, flightDate);
+            if (tickets == null) {
+                logger.warn("Sorry, all tickets have been sold");
+                return 1;
+            }
+            logger.info("ticket bought");
+            return 0;
         } catch (ParseException e) {
-            logger.error("cannot parse date");
+            logger.error(e);
+            return -1;
+        } catch (SQLException e) {
+            logger.error(e);
             return -1;
         }
-        passenger = dao.findPassengerByPassportNumberAndCitizenship(passport, citizenship);
-        if (passenger == null) {
-            throw new IllegalArgumentException("wrong passport number or citizenship or passenger haven't registered");
-        }
-        if (from == null || to == null) {
-            logger.warn("illegal cities");
-            return 1;
-        }
-        tickets = buyTicket(passenger, from, to, flightDate);
-        if (tickets == null) {
-            logger.warn("Sorry, all tickets have been sold");
-            return 1;
-        }
 
-        for (Ticket it : tickets) {
-            logger.info(it.toString());
-        }
-        return 0;
     }
 
-    public List<Ticket> buyTicket(Passenger passenger, City from, City to, Calendar flightDate) {
+    public List<Ticket> buyTicket(Passenger passenger, City from, City to, Calendar flightDate) throws SQLException {
         if (passenger == null || from == null || to == null || flightDate == null) {
             throw new IllegalArgumentException();
         }
@@ -107,7 +110,7 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
         List<Calendar> flightDates = new LinkedList<>();
         Calendar currentDate = (Calendar) flightDate.clone();
         Flight temp = path.get(0);
-        synchronized (dao.getAllTickets()) {
+        synchronized (this) {
             for (Flight it : path) {
                 if (temp.getArrivalTime().compareTo(it.getDepartureTime()) > 0) {
                     flightDate.add(Calendar.DATE, 1);
@@ -115,27 +118,28 @@ public class BuyTicketToShortestRouteCommand extends AbstractCommand {
                 }
                 flightDates.add(currentDate);
                 int airplaneCapacity = dao.findAirplaneByName(it.getAirplaneName()).getCapacity();
-                int numberOfSoldTickets = dao.getAllActualTicketsInFlight(it.getId(), currentDate).size();
+                int numberOfSoldTickets = dao.getNumberOfSoldTicketsInFlight(it.getId(), currentDate);
                 if (airplaneCapacity - numberOfSoldTickets < 1) {
                     logger.warn("No available tickets in flight, id = " + it.getId() +
                             ", from: " + it.getDepartureAirportName() +
                             ", to: " + it.getArrivalAirportName() +
-                            " at: " + currentDate.get(Calendar.YEAR)+" "+currentDate.get(Calendar.MONTH)+" "+currentDate.get(Calendar.DATE));
+                            " at: " + currentDate.get(Calendar.YEAR) + " " + currentDate.get(Calendar.MONTH) + " " + currentDate.get(Calendar.DATE));
                     return null;
                 }
                 temp = it;
             }
             int i = 0;
             for (Flight it : path) {
-                Ticket ticket = new Ticket(IdGenerator.getInstance().getId(), passenger.getId(), it.getId(), flightDates.get(i++));
+                Ticket ticket = new Ticket(IdGenerator.getInstance().getId(), passenger.getId(), it.getId(), flightDates.get(i++), Calendar.getInstance());
                 logger.trace("Ticket created,  id = " + ticket.getId());
-                dao.addTicket(ticket);
                 currentTickets.add(ticket);
                 SecurityContextHolder.getLoggedHolder().addTicket(ticket.getId());
-                logger.trace("ticket saved");
             }
+            dao.addAllTickets(currentTickets);
+            logger.trace("tickets saved");
+            return currentTickets;
         }
-        return currentTickets;
+
     }
 
     @Override

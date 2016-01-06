@@ -2,20 +2,22 @@ package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.Ticket;
 import com.netcracker.edu.bobjects.User;
+import com.netcracker.edu.dao.DAOFactory;
 import com.netcracker.edu.dao.DAObject;
-import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.SQLException;
 
 /**
+ * Command
  * Created by Zhassulan on 15.11.2015.
  */
 public class ReturnTicketCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(ReturnTicketCommand.class);
-    private static DAObject dao = DAObjectFromSerializedStorage.getInstance();
+    private static DAObject dao = DAOFactory.getDAObject();
 
     public ReturnTicketCommand() {
         super(User.Roles.USER);
@@ -34,10 +36,15 @@ public class ReturnTicketCommand extends AbstractCommand {
             throw new IllegalArgumentException();
         }
         BigInteger ticketId = BigInteger.valueOf(Long.parseLong(parameters[0]));
-        return returnTicket(ticketId);
+        try {
+            return returnTicket(ticketId);
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            return -1;
+        }
     }
 
-    public int returnTicket(BigInteger ticketId) {
+    public int returnTicket(BigInteger ticketId) throws SQLException {
         if (ticketId == null || ticketId.compareTo(BigInteger.ZERO) < 0) {
             logger.warn("illegal argument");
             throw new IllegalArgumentException();
@@ -47,9 +54,9 @@ public class ReturnTicketCommand extends AbstractCommand {
             logger.warn("ticket not found or already returned");
             return 1;
         }
-        synchronized (this) {
-            ticket.setStatus(true);
-        }
+        ticket.setStatus(true);
+        dao.updateTicket(ticket);
+
         logger.info("ticket returned");
         return 0;
     }

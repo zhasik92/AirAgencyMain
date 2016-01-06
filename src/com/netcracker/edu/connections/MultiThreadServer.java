@@ -2,6 +2,7 @@ package com.netcracker.edu.connections;
 
 import com.netcracker.edu.commands.AbstractCommand;
 import com.netcracker.edu.commands.CommandsEngine;
+import com.netcracker.edu.dao.DAOFactory;
 import com.netcracker.edu.session.SecurityContextHolder;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.security.AccessControlException;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
@@ -21,18 +23,18 @@ import java.util.Arrays;
  */
 public class MultiThreadServer implements Runnable {
     private static final Logger logger = LogManager.getLogger(MultiThreadServer.class);
-    private Socket csocket;
+    private Socket cSocket;
 
-    public MultiThreadServer(Socket csocket) {
-        this.csocket = csocket;
+    public MultiThreadServer(Socket cSocket) {
+        this.cSocket = cSocket;
     }
 
     @Override
     public void run() {
         try (PrintWriter out =
-                     new PrintWriter(csocket.getOutputStream(), true);
+                     new PrintWriter(cSocket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(
-                     new InputStreamReader(csocket.getInputStream()))) {
+                     new InputStreamReader(cSocket.getInputStream()))) {
 
             String input;
             while ((input = in.readLine()) != null) {
@@ -40,7 +42,7 @@ public class MultiThreadServer implements Runnable {
 
                     String[] splittedCommand = input.toLowerCase().split(" ");
                     AbstractCommand command = CommandsEngine.getInstance().getCommand(splittedCommand[0].toLowerCase());
-                    int executionCode = -1;
+                    int executionCode;
                     if (command != null) {
                         executionCode = command.execute(Arrays.copyOfRange(splittedCommand, 1, splittedCommand.length), SecurityContextHolder.getLoggedHolder());
                         out.println(executionCode);
@@ -55,21 +57,22 @@ public class MultiThreadServer implements Runnable {
                 } catch (IllegalArgumentException e) {
                     logger.error(e.toString());
                     out.println(1);
-                }catch (AccessControlException|AccessDeniedException ace){
+                } catch (AccessControlException | AccessDeniedException ace) {
                     logger.warn(ace.toString());
                     out.println(1);
                 }
-
             }
-            csocket.close();
-        }catch (SocketException e){
+            cSocket.close();
+        } catch (SocketException e) {
             logger.error(e.toString());
+            try {
+                DAOFactory.getDAObject().updateUser(SecurityContextHolder.getLoggedHolder());
+            } catch (SQLException sqle) {
+                logger.error(sqle);
+            }
             SecurityContextHolder.removeUserFromSignedUsers();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }finally {
-
         }
     }
 }

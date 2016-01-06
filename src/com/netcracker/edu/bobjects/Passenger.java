@@ -18,11 +18,11 @@ public class Passenger extends HasIdObject implements Serializable {
     private String passportNumber;
     private String citizenship;
 
-    public Passenger(BigInteger id, String passportNumber, String citizenship) {
+    /*public Passenger(BigInteger id, String passportNumber, String citizenship) {
         super(id);
         setPassportNumber(passportNumber);
         setCitizenship(citizenship);
-    }
+    }*/
 
     // i'll refactor this latter, builder pattern is better
     public Passenger(BigInteger id, String email, String firstName, String lastName, Date dateOfBirth, String passportNumber, String citizenship) {
@@ -96,14 +96,14 @@ public class Passenger extends HasIdObject implements Serializable {
     }
 
     @Override
+    // TODO: 04.01.2016 CHECK EQUALS AND HASHCODE
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Passenger passenger = (Passenger) o;
 
-        if (!passportNumber.equals(passenger.passportNumber)) return false;
-        return citizenship.equals(passenger.citizenship);
+        return passportNumber.equals(passenger.passportNumber) && citizenship.equals(passenger.citizenship);
 
     }
 

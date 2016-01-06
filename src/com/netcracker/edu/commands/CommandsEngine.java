@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Zhassulan on 23.10.2015.
+ *  Created by Zhassulan on 23.10.2015.
  */
 public final class CommandsEngine {
     private static final Logger logger = LogManager.getLogger(CommandsEngine.class);
@@ -35,6 +35,7 @@ public final class CommandsEngine {
             listOfCommands.add(new ViewCommand());
             listOfCommands.add(new ReturnLastBoughtTicket());
             listOfCommands.add(new QuitCommand());
+            listOfCommands.add(new ActualizeGraphCommand());
 
             mapWithCommands = new HashMap<>();
             for (AbstractCommand it : listOfCommands) {
@@ -44,6 +45,7 @@ public final class CommandsEngine {
         }
     }
 
+    // TODO: 04.01.2016 check singleton
     public synchronized static CommandsEngine getInstance() {
         if (instance == null) {
             instance = new CommandsEngine();

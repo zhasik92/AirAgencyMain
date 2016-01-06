@@ -1,8 +1,8 @@
 package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.User;
+import com.netcracker.edu.dao.DAOFactory;
 import com.netcracker.edu.dao.DAObject;
-import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
 import com.netcracker.edu.session.SecurityContextHolder;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.AccessControlException;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Arrays;
  */
 public class SignInCommand extends AbstractCommand {
     private static final Logger logger = LogManager.getLogger(SignInCommand.class);
-    private DAObject dao = DAObjectFromSerializedStorage.getInstance();
+    private DAObject dao = DAOFactory.getDAObject();
 
     public SignInCommand() {
         super(User.Roles.USER);
@@ -55,19 +56,23 @@ public class SignInCommand extends AbstractCommand {
             login = parameters[0];
             password = parameters[1].toCharArray();
         }
-        user = dao.findUserByLogin(login);
-        if (user == null || !Arrays.equals(user.getPassword(), password)) {
-            logger.warn("Login and password are incorrect");
-            return 1;
+        try {
+            user = dao.findUserByLogin(login);
+            if (user == null || !Arrays.equals(user.getPassword(), password)) {
+                logger.warn("Login and password are incorrect");
+                return 1;
+            }
+            SecurityContextHolder.setLoggedUser(user);
+            logger.info("signed in");
+            return 0;
+        } catch (SQLException sqle) {
+            logger.error(sqle);
+            return -1;
         }
-        SecurityContextHolder.setLoggedUser(user);
-
-        logger.info("signed in");
-        return 0;
     }
 
     @Override
     public String getHelp() {
-        return "SignInCommand usage:" +"\""+getName()+"\""+" or \""+getName()+"login password\"";
+        return "SignInCommand usage:" + "\"" + getName() + "\"" + " or \"" + getName() + "login password\"";
     }
 }

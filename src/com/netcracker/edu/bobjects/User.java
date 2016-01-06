@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by Zhassulan on 15.11.2015.
  */
-public class User implements Serializable {
+public class User extends BusinessObject implements Serializable {
     private static final long serialVersionUID= -439309840366060163L;
     private String login;
     private char[] password;

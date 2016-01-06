@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,35 +18,35 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Created by Zhassulan on 23.10.2015.
  */
-public class DAObjectFromSerializedStorage implements DAObject {
-    private static DAObject instance;
+public class InMemoryDAO implements DAObject {
+    private static InMemoryDAO instance;
     private static InMemoryStorage storage;
 
-    private ReentrantReadWriteLock airplanesRWL=new ReentrantReadWriteLock();
-    private Lock airplanesRL=airplanesRWL.readLock();
-    private Lock airplanesWL=airplanesRWL.writeLock();
+    private ReentrantReadWriteLock airplanesRWL = new ReentrantReadWriteLock();
+    private Lock airplanesRL = airplanesRWL.readLock();
+    private Lock airplanesWL = airplanesRWL.writeLock();
 
-    private ReentrantReadWriteLock citiesRWL=new ReentrantReadWriteLock();
-    private Lock citiesRL=citiesRWL.readLock();
-    private Lock citiesWL=citiesRWL.writeLock();
+    private ReentrantReadWriteLock citiesRWL = new ReentrantReadWriteLock();
+    private Lock citiesRL = citiesRWL.readLock();
+    private Lock citiesWL = citiesRWL.writeLock();
 
-    private ReentrantReadWriteLock flightsRWL=new ReentrantReadWriteLock();
-    private Lock flightsRL=flightsRWL.readLock();
-    private Lock flightsWL=flightsRWL.writeLock();
+    private ReentrantReadWriteLock flightsRWL = new ReentrantReadWriteLock();
+    private Lock flightsRL = flightsRWL.readLock();
+    private Lock flightsWL = flightsRWL.writeLock();
 
-    private ReentrantReadWriteLock passengersRWL=new ReentrantReadWriteLock();
-    private Lock passengersRL=passengersRWL.readLock();
-    private Lock passengersWL=passengersRWL.writeLock();
+    private ReentrantReadWriteLock passengersRWL = new ReentrantReadWriteLock();
+    private Lock passengersRL = passengersRWL.readLock();
+    private Lock passengersWL = passengersRWL.writeLock();
 
     private ReentrantReadWriteLock ticketsRWL = new ReentrantReadWriteLock();
     private Lock ticketsRL = ticketsRWL.readLock();
     private Lock ticketWL = ticketsRWL.writeLock();
 
-    private ReentrantReadWriteLock usersRWL=new ReentrantReadWriteLock();
-    private Lock usersRL=usersRWL.readLock();
-    private Lock usersWL=usersRWL.writeLock();
+    private ReentrantReadWriteLock usersRWL = new ReentrantReadWriteLock();
+    private Lock usersRL = usersRWL.readLock();
+    private Lock usersWL = usersRWL.writeLock();
 
-    private DAObjectFromSerializedStorage() {
+    private InMemoryDAO() {
         {
             try {
                 File file = new File("InMemoryStorage.out");
@@ -63,14 +64,14 @@ public class DAObjectFromSerializedStorage implements DAObject {
         }
     }
 
-    public static synchronized DAObject getInstance() {
+    // TODO: 04.01.2016 check singleton
+    public static synchronized InMemoryDAO getInstance() {
         if (instance == null) {
-            instance = new DAObjectFromSerializedStorage();
+            instance = new InMemoryDAO();
         }
         return instance;
     }
 
-    @Override
     public InMemoryStorage getStorage() {
         return storage;
     }
@@ -82,7 +83,7 @@ public class DAObjectFromSerializedStorage implements DAObject {
             //synchronized (storage.getAirplanes()) {
             storage.getAirplanes().add(airplane);
             //}
-        }finally {
+        } finally {
             airplanesWL.unlock();
         }
     }
@@ -90,35 +91,35 @@ public class DAObjectFromSerializedStorage implements DAObject {
     @Override
     public void addCity(City city) {
         citiesWL.lock();
-        try{
-        //synchronized (storage.getCities()) {
+        try {
+            //synchronized (storage.getCities()) {
             storage.getCities().add(city);
-        //}
-    }finally {
+            //}
+        } finally {
             citiesWL.unlock();
         }
     }
 
     @Override
     public void addFlight(Flight flight) {
-      //  synchronized (storage.getFlights()) {
+        //  synchronized (storage.getFlights()) {
         flightsWL.lock();
         try {
             storage.getFlights().add(flight);
             //   }
-        }finally {
+        } finally {
             flightsWL.unlock();
         }
     }
 
     @Override
     public void addPassenger(Passenger passenger) {
-       // synchronized (storage.getPassengers()) {
+        // synchronized (storage.getPassengers()) {
         passengersWL.lock();
         try {
             storage.getPassengers().add(passenger);
             //  }
-        }finally {
+        } finally {
             passengersWL.unlock();
         }
     }
@@ -150,23 +151,23 @@ public class DAObjectFromSerializedStorage implements DAObject {
     @Override
     public void addUser(User user) {
         //synchronized (storage.getUsers()) {
-          usersWL.lock();
+        usersWL.lock();
         try {
             storage.getUsers().add(user);
             //}
-        }finally {
+        } finally {
             usersWL.unlock();
         }
     }
 
     @Override
     public Collection<Airplane> getAllAirplanes() {
-       // synchronized (storage.getAirplanes()) {
+        // synchronized (storage.getAirplanes()) {
         airplanesRL.lock();
         try {
             return storage.getAirplanes();
             //}
-        }finally {
+        } finally {
             airplanesRL.unlock();
         }
     }
@@ -178,7 +179,7 @@ public class DAObjectFromSerializedStorage implements DAObject {
         try {
             return storage.getCities();
             //}
-        }finally {
+        } finally {
             citiesRL.unlock();
         }
     }
@@ -190,7 +191,7 @@ public class DAObjectFromSerializedStorage implements DAObject {
         try {
             return storage.getFlights();
             // }
-        }finally {
+        } finally {
             flightsRL.unlock();
         }
     }
@@ -201,7 +202,7 @@ public class DAObjectFromSerializedStorage implements DAObject {
         passengersRL.lock();
         try {
             return storage.getPassengers();
-        }finally {
+        } finally {
             passengersRL.unlock();
         }
         //  }
@@ -243,10 +244,9 @@ public class DAObjectFromSerializedStorage implements DAObject {
     }
 
     @Override
-    public Collection<Ticket> getAllActualTicketsInFlight(BigInteger flightId, Calendar date) {
-        HashSet<Ticket> result = new HashSet<>();
+    public int getNumberOfSoldTicketsInFlight(BigInteger flightId, Calendar date) {
         Collection<Ticket> tickets = storage.getTickets();
-        //    synchronized (storage.getTickets()) {
+        int result = 0;
         ticketsRL.lock();
         try {
             for (Ticket it : tickets) {
@@ -255,14 +255,12 @@ public class DAObjectFromSerializedStorage implements DAObject {
                         it.getFlightDate().get(Calendar.MONTH) == date.get(Calendar.MONTH) &&
                         it.getFlightDate().get(Calendar.DATE) == date.get(Calendar.DATE) &&
                         !it.isCanceled()) {
-                    result.add(it);
+                    result++;
                 }
             }
         } finally {
             ticketsRL.unlock();
         }
-
-        //  }
         return result;
     }
 
@@ -273,7 +271,7 @@ public class DAObjectFromSerializedStorage implements DAObject {
         try {
             return storage.getUsers();
             //  }
-        }finally {
+        } finally {
             usersRL.unlock();
         }
     }
@@ -283,12 +281,13 @@ public class DAObjectFromSerializedStorage implements DAObject {
         String lowerCaseAirplane = airplane.toLowerCase();
         //  synchronized (storage.getAirplanes()) {
         airplanesRL.lock();
-        try{
-        for (Airplane it : storage.getAirplanes()) {
-            if (lowerCaseAirplane.equals(it.getName().toLowerCase())) {
-                return it;
+        try {
+            for (Airplane it : storage.getAirplanes()) {
+                if (lowerCaseAirplane.equals(it.getName().toLowerCase())) {
+                    return it;
+                }
             }
-        }}finally {
+        } finally {
             airplanesRL.unlock();
         }
         //}
@@ -300,12 +299,13 @@ public class DAObjectFromSerializedStorage implements DAObject {
         String lowerCaseCity = city.toLowerCase();
         //synchronized (storage.getCities()) {
         citiesRL.lock();
-        try{
-        for (City it : storage.getCities()) {
-            if (lowerCaseCity.equals(it.getName().toLowerCase())) {
-                return it;
+        try {
+            for (City it : storage.getCities()) {
+                if (lowerCaseCity.equals(it.getName().toLowerCase())) {
+                    return it;
+                }
             }
-        }}finally {
+        } finally {
             citiesRL.unlock();
         }
         //}
@@ -316,12 +316,13 @@ public class DAObjectFromSerializedStorage implements DAObject {
     public Flight findFlightById(BigInteger id) {
         //synchronized (storage.getFlights()) {
         flightsRL.lock();
-        try{
-        for (Flight it : storage.getFlights()) {
-            if (id.equals(it.getId())) {
-                return it;
+        try {
+            for (Flight it : storage.getFlights()) {
+                if (id.equals(it.getId())) {
+                    return it;
+                }
             }
-        }}finally {
+        } finally {
             flightsRL.unlock();
         }
         // }
@@ -332,12 +333,13 @@ public class DAObjectFromSerializedStorage implements DAObject {
     public Passenger findPassengerById(BigInteger id) {
         // synchronized (storage.getPassengers()) {
         passengersRL.lock();
-        try{
-        for (Passenger it : storage.getPassengers()) {
-            if (id.equals(it.getId())) {
-                return it;
+        try {
+            for (Passenger it : storage.getPassengers()) {
+                if (id.equals(it.getId())) {
+                    return it;
+                }
             }
-        }}finally {
+        } finally {
             passengersRL.unlock();
         }
         // }
@@ -348,12 +350,13 @@ public class DAObjectFromSerializedStorage implements DAObject {
     public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) {
         //    synchronized (storage.getPassengers()) {
         passengersRL.lock();
-        try{
-        for (Passenger it : storage.getPassengers()) {
-            if (passportNumber.equals(it.getPassportNumber()) && citizenship.toLowerCase().equals(it.getCitizenship().toLowerCase())) {
-                return it;
+        try {
+            for (Passenger it : storage.getPassengers()) {
+                if (passportNumber.equals(it.getPassportNumber()) && citizenship.toLowerCase().equals(it.getCitizenship().toLowerCase())) {
+                    return it;
+                }
             }
-        }}finally {
+        } finally {
             passengersRL.unlock();
         }
         //   }
@@ -379,18 +382,50 @@ public class DAObjectFromSerializedStorage implements DAObject {
 
     @Override
     public User findUserByLogin(String login) {
-        String loginInLowerCase=login.toLowerCase();
+        String loginInLowerCase = login.toLowerCase();
         //      synchronized (getAllUsers()) {
         usersRL.lock();
-        try{
-        for (User it : getAllUsers()) {
-            if (it.getLogin().toLowerCase().equals(loginInLowerCase)) {
-                return it;
+        try {
+            for (User it : getAllUsers()) {
+                if (it.getLogin().toLowerCase().equals(loginInLowerCase)) {
+                    return it;
+                }
             }
-        }}finally {
+        } finally {
             usersRL.unlock();
         }
         //      }
         return null;
+    }
+
+    // TODO: 04.01.2016 mark as stubs
+    @Override
+    public void updateAirplane(Airplane airplane) throws SQLException {
+
+    }
+
+    @Override
+    public void updateCity(City city) throws SQLException {
+
+    }
+
+    @Override
+    public void updateFlight(Flight flight) throws SQLException {
+
+    }
+
+    @Override
+    public void updatePassenger(Passenger passenger) throws SQLException {
+
+    }
+
+    @Override
+    public void updateTicket(Ticket ticket) throws SQLException {
+
+    }
+
+    @Override
+    public void updateUser(User user) throws SQLException {
+
     }
 }

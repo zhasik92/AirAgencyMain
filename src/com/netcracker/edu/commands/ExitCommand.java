@@ -1,7 +1,7 @@
 package com.netcracker.edu.commands;
 
 import com.netcracker.edu.bobjects.User;
-import com.netcracker.edu.dao.DAObjectFromSerializedStorage;
+import com.netcracker.edu.dao.InMemoryDAO;
 import com.netcracker.edu.persist.InMemoryStorage;
 import com.netcracker.edu.util.IdGenerator;
 import org.apache.log4j.LogManager;
@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 
 /**
+ * Command
  * Created by Zhassulan on 23.10.2015.
  */
 public class ExitCommand extends AbstractCommand {
@@ -29,7 +30,7 @@ public class ExitCommand extends AbstractCommand {
 
     @Override
     protected int execute(String[] parameters) throws IOException {
-        InMemoryStorage storage = DAObjectFromSerializedStorage.getInstance().getStorage();
+        InMemoryStorage storage = InMemoryDAO.getInstance().getStorage();
         FileOutputStream fos = new FileOutputStream("InMemoryStorage.out");
         logger.trace("FOS created(InMemoryStorage.out)");
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -46,7 +47,7 @@ public class ExitCommand extends AbstractCommand {
         logger.trace("OOS created (idGen.out)");
         oos.writeObject(id);
         oos.flush();
-        logger.trace("idGen writted to file");
+        logger.trace("idGen wrote to file");
         oos.close();
         logger.trace("exit");
         System.exit(0);

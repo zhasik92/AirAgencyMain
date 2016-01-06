@@ -19,11 +19,11 @@ public class SecurityContextHolder {
     private static Lock readLock = rwl.readLock();
     private static Lock writeLock = rwl.writeLock();
 
-    public final static User getLoggedHolder() {
+    public static User getLoggedHolder() {
         return threadLocalScope.get();
     }
 
-    public /* synchronized*/ static void setLoggedUser(User user) throws IOException {
+    public  static void setLoggedUser(User user) throws IOException {
         if (user != null) {
             readLock.lock();
             try {
@@ -43,7 +43,7 @@ public class SecurityContextHolder {
         threadLocalScope.set(user);
     }
 
-    public /*synchronized*/ final static void removeUserFromSignedUsers() {
+    public /*synchronized*/  static void removeUserFromSignedUsers() {
         activeUsers.remove(threadLocalScope.get());
     }
 }

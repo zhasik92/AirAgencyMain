@@ -17,14 +17,13 @@ public class Server {
     public static void execute() throws IOException {
 
 
-        ServerSocket ssock = new ServerSocket(PORTNUMBER);
+        ServerSocket sSock = new ServerSocket(PORTNUMBER);
         System.out.println("Listening");
         while (true) {
             logger.info("Waiting for client");
-            Socket sock = ssock.accept();
+            Socket sock = sSock.accept();
             System.out.println("Connected");
             new Thread(new MultiThreadServer(sock)).start();
-
         }
     }
 

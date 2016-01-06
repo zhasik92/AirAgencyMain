@@ -1,9 +1,9 @@
 package com.netcracker.edu.dao;
 
 import com.netcracker.edu.bobjects.*;
-import com.netcracker.edu.persist.InMemoryStorage;
 
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -11,49 +11,61 @@ import java.util.Collection;
  * Created by Zhassulan on 04.12.2015.
  */
 public interface DAObject {
-    InMemoryStorage getStorage();
 
-    void addAirplane(Airplane airplane);
+    void addAirplane(Airplane airplane) throws SQLException;
 
-    void addCity(City city);
+    void addCity(City city) throws SQLException;
 
-    void addFlight(Flight flight);
+    void addFlight(Flight flight) throws SQLException;
 
-    void addPassenger(Passenger passenger);
+    void addPassenger(Passenger passenger) throws SQLException;
 
-    void addTicket(Ticket ticket);
+    void addTicket(Ticket ticket) throws SQLException;
 
-    void addAllTickets(Collection<Ticket> tickets);
+    void addAllTickets(Collection<Ticket> tickets) throws SQLException;
 
-    void addUser(User user);
+    void addUser(User user) throws SQLException;
 
-    Collection<Airplane> getAllAirplanes();
+    Collection<Airplane> getAllAirplanes() throws SQLException;
 
-    Collection<City> getAllCities();
+    Collection<City> getAllCities() throws SQLException;
 
-    Collection<Flight> getAllFlights();
+    Collection<Flight> getAllFlights() throws SQLException;
 
-    Collection<Passenger> getAllPassengers();
+    Collection<Passenger> getAllPassengers() throws SQLException;
 
-    Collection<Ticket> getAllTickets();
+    Collection<Ticket> getAllTickets() throws SQLException;
 
-    Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId, Calendar flightDate);
+    // TODO: 05.01.2016 remove it?
+    Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId, Calendar flightDate) throws SQLException;
 
-    Collection<Ticket> getAllActualTicketsInFlight(BigInteger flightId, Calendar flightDate);
+    int getNumberOfSoldTicketsInFlight(BigInteger flightId, Calendar flightDate) throws SQLException;
 
-    Collection<User> getAllUsers();
+    Collection<User> getAllUsers() throws SQLException;
 
-    Airplane findAirplaneByName(String airplane);
+    Airplane findAirplaneByName(String airplane) throws SQLException;
 
-    City findCityByName(String city);
+    City findCityByName(String city) throws SQLException;
 
-    Flight findFlightById(BigInteger id);
+    Flight findFlightById(BigInteger id) throws SQLException;
 
-    Passenger findPassengerById(BigInteger id);
+    Passenger findPassengerById(BigInteger id) throws SQLException;
 
-    Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship);
+    Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) throws SQLException;
 
-    Ticket findTicketById(BigInteger id);
+    Ticket findTicketById(BigInteger id) throws SQLException;
 
-    User findUserByLogin(String login);
+    User findUserByLogin(String login) throws SQLException;
+
+    void updateAirplane(Airplane airplane) throws SQLException;
+
+    void updateCity(City city) throws SQLException;
+
+    void updateFlight(Flight flight) throws SQLException;
+
+    void updatePassenger(Passenger passenger) throws SQLException;
+
+    void updateTicket(Ticket ticket) throws SQLException;
+
+    void updateUser(User user) throws SQLException;
 }
