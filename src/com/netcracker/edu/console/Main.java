@@ -1,10 +1,11 @@
 package com.netcracker.edu.console;
 
-import com.netcracker.edu.connections.Server;
+import com.netcracker.edu.server.Server;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 
 /**
@@ -13,7 +14,7 @@ import java.text.ParseException;
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException,SQLException {
         try {
             switch (args[0].toLowerCase()) {
                 case "server":
@@ -33,5 +34,7 @@ public class Main {
             logger.error(ioe);
             ioe.printStackTrace();
         }
+
+
     }
 }

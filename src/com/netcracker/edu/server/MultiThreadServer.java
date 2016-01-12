@@ -1,4 +1,4 @@
-package com.netcracker.edu.connections;
+package com.netcracker.edu.server;
 
 import com.netcracker.edu.commands.AbstractCommand;
 import com.netcracker.edu.commands.CommandsEngine;

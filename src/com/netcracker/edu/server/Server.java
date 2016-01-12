@@ -1,4 +1,4 @@
-package com.netcracker.edu.connections;
+package com.netcracker.edu.server;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
