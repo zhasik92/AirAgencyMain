@@ -22,31 +22,6 @@ public class OracleDAO implements DAObject {
     private static final OracleDAO INSTANCE = new OracleDAO();
     private final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd");
     private FastDateFormat timeFormat = FastDateFormat.getInstance("HH:mm:ss");
-    private static final String INSERT_AIRPLANE = "INSERT INTO AIRPLANE (NAME, CAPACITY) VALUES (?,?)";
-    private static final String INSERT_CITY = "INSERT INTO CITIES (NAME) VALUES(?)";
-    private static final String INSERT_FLIGHT = "INSERT INTO FLIGHTS (ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID, PRICE) VALUES (?,?,?,TO_TIMESTAMP(?,'HH24:MI:SS'),TO_TIMESTAMP(?,'HH24:MI:SS'),?,?)";
-    private static final String INSERT_PASSENGER = "INSERT INTO PASSENGERS (ID,EMAIL,FIRST_NAME,LAST_NAME,DATE_OF_BIRTH,PASSPORT_NUMBER,CITIZENSHIP) VALUES(?,?,?,?,TO_DATE(?,'YYYY-MM-DD'),?,?)";
-    private static final String INSERT_TICKET = "INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES(?,?,?,?,TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'),TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'))";
-    private static final String INSERT_USER = "INSERT INTO USERS (LOGIN,PASSWORD,ROLE) VALUES (?,?,?)";
-    private static final String INSERT_USERS_TICKETS = "INSERT INTO USERS_TICKETS (USER_LOGIN,TICKET_ID) VALUES (?,?)";
-    private static final String SELECT_ALL_AIRPLANES = "SELECT NAME, CAPACITY FROM AIRPLANE";
-    private static final String SELECT_ALL_CITIES = "SELECT NAME FROM CITIES";
-    private static final String SELECT_ALL_FLIGHTS = "SELECT ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID,PRICE FROM FLIGHTS";
-    private static final String SELECT_ALL_PASSENGERS = "SELECT ID,EMAIL,FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSPORT_NUMBER, CITIZENSHIP FROM PASSENGERS";
-    private static final String SELECT_ALL_TICKETS = "SELECT ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE FROM TICKETS";
-    private static final String SELECT_ALL_USERS = "SELECT LOGIN, PASSWORD, ROLE FROM USERS";
-    private static final String COUNT_NUMBER_OF_ACTUAL_TICKETS_IN_FLIGHT = "SELECT COUNT(*) FROM TICKETS WHERE FLIGHT_ID=? AND TRUNC(FLIGHT_DATE,'DD')=TO_DATE(?,'YYYY-MM-DD') AND STATUS=0";
-    private static final String SELECT_AIRPLANE_BY_NAME = "SELECT NAME,CAPACITY FROM AIRPLANE WHERE NAME=?";
-    private static final String SELECT_CITY_BY_NAME = "SELECT NAME FROM CITIES WHERE NAME=?";
-    private static final String SELECT_FLIGHT_BY_ID = "SELECT ID, DEP_AIRPORT, ARR_AIRPORT, DEP_TIME, ARR_TIME, AIRPLANE_ID, PRICE FROM FLIGHTS WHERE ID=?";
-    /*private OracleDAO() {
-        try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-            conn = DriverManager.getConnection(DBURL, LOGIN, PASSWORD);
-        } catch (ClassNotFoundException | SQLException e) {
-            logger.error(e);
-        }
-    }*/
 
     public static OracleDAO getInstance() {
         return INSTANCE;
@@ -58,7 +33,7 @@ public class OracleDAO implements DAObject {
             throw new IllegalArgumentException("airplane can't be null");
         }
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(INSERT_AIRPLANE)) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO AIRPLANE (NAME, CAPACITY) VALUES (?,?)")) {
             ps.setString(1, airplane.getName());
             ps.setInt(2, airplane.getCapacity());
             ps.executeUpdate();
@@ -78,7 +53,7 @@ public class OracleDAO implements DAObject {
             throw new IllegalArgumentException("city can't be null");
         }
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement st = connection.prepareStatement(INSERT_CITY)) {
+        try (PreparedStatement st = connection.prepareStatement("INSERT INTO CITIES (NAME) VALUES(?)")) {
             st.setString(1, city.getName());
             st.executeUpdate();
         } catch (SQLException sqle) {
@@ -96,7 +71,7 @@ public class OracleDAO implements DAObject {
             throw new IllegalArgumentException("flight can't be null");
         }
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(INSERT_FLIGHT)) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO FLIGHTS (ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID, PRICE) VALUES (?,?,?,TO_TIMESTAMP(?,'HH24:MI:SS'),TO_TIMESTAMP(?,'HH24:MI:SS'),?,?)")) {
             ps.setBigDecimal(1, new BigDecimal(flight.getId()));
             ps.setString(2, flight.getDepartureAirportName());
             ps.setString(3, flight.getArrivalAirportName());
@@ -104,10 +79,6 @@ public class OracleDAO implements DAObject {
             ps.setString(5, timeFormat.format(flight.getArrivalTime()));
             ps.setString(6, flight.getAirplaneName());
             ps.setDouble(7, flight.getPrice());
-            /*ps.executeQuery("INSERT INTO FLIGHTS (ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID, PRICE) VALUES " +
-                    "('" + flight.getId() + "', '" + flight.getDepartureAirportName() + "', '" + flight.getArrivalAirportName() + "',TO_TIMESTAMP( '" +
-                    timeFormat.format(flight.getDepartureTime()) + "','HH24:MI:SS'),TO_TIMESTAMP( '" + timeFormat.format(flight.getArrivalTime()) + "','HH24:MI:SS'), '" + flight.getAirplaneName() + "', " +
-                    flight.getPrice() + ")");*/
             ps.executeUpdate();
         } catch (SQLException sqle) {
             logger.error(sqle);
@@ -124,7 +95,7 @@ public class OracleDAO implements DAObject {
             throw new IllegalArgumentException("passenger can't be null");
         }
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(INSERT_PASSENGER)) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO PASSENGERS (ID,EMAIL,FIRST_NAME,LAST_NAME,DATE_OF_BIRTH,PASSPORT_NUMBER,CITIZENSHIP) VALUES(?,?,?,?,TO_DATE(?,'YYYY-MM-DD'),?,?)")) {
             ps.setBigDecimal(1, new BigDecimal(passenger.getId()));
             ps.setString(2, passenger.getEmail());
             ps.setString(3, passenger.getFirstName());
@@ -133,10 +104,6 @@ public class OracleDAO implements DAObject {
             ps.setString(6, passenger.getPassportNumber());
             ps.setString(7, passenger.getCitizenship());
             ps.executeUpdate();
-            /*st.executeQuery("INSERT INTO PASSENGERS (ID,EMAIL,FIRST_NAME,LAST_NAME,DATE_OF_BIRTH,PASSPORT_NUMBER,CITIZENSHIP)" +
-                    " VALUES (" + passenger.getId() + ", '" + passenger.getEmail() + "', '" + passenger.getFirstName() + "', '" +
-                    passenger.getLastName() + "', TO_DATE('" + dateFormat.format(passenger.getDateOfBirth()) + "','YYYY-MM-DD'), '" + passenger.getPassportNumber()
-                    + "', '" + passenger.getCitizenship() + "')");*/
         } catch (SQLException sqle) {
             logger.error(sqle);
             connection.rollback();
@@ -152,7 +119,7 @@ public class OracleDAO implements DAObject {
             throw new IllegalArgumentException("ticket can't be null");
         }
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(INSERT_TICKET)) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES(?,?,?,?,TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'),TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'))")) {
             ps.setBigDecimal(1, new BigDecimal(ticket.getId()));
             ps.setBigDecimal(2, new BigDecimal(ticket.getPassengerId()));
             ps.setBigDecimal(3, new BigDecimal(ticket.getFlightId()));
@@ -161,11 +128,6 @@ public class OracleDAO implements DAObject {
             ps.setString(5, new Timestamp(ticket.getFlightDate().getTime().getTime()).toString());
             ps.setString(6, new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()).toString());
             ps.executeUpdate();
-           /* st.executeQuery("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES ('" +
-                    ticket.getId() + "', '" + ticket.getPassengerId() + "', '" + ticket.getFlightId() + "', '" +
-                    (ticket.isCanceled() ? 1 : 0) + "'," +
-                    "TO_TIMESTAMP('" + new Timestamp(ticket.getFlightDate().getTime().getTime()) + "','YYYY-MM-DD'), " +
-                    "TO_TIMESTAMP('" + new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()) + "','YYYY-MM-DD'))");*/
         } catch (SQLException sqle) {
             logger.error(sqle);
             connection.rollback();
@@ -181,7 +143,7 @@ public class OracleDAO implements DAObject {
             throw new IllegalArgumentException("tickets can't be null");
         }
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(INSERT_TICKET)) {
+        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES(?,?,?,?,TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'),TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'))")) {
             connection.setAutoCommit(false);
 
             for (Ticket ticket : tickets) {
@@ -193,11 +155,6 @@ public class OracleDAO implements DAObject {
                 ps.setString(5, new Timestamp(ticket.getFlightDate().getTime().getTime()).toString());
                 ps.setString(6, new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()).toString());
                 ps.executeUpdate();
-                /*st.executeQuery("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES ('" +
-                        ticket.getId() + "', '" + ticket.getPassengerId() + "', '" + ticket.getFlightId() + "', '" +
-                        (ticket.isCanceled() ? 1 : 0) + "'," +
-                        "TO_TIMESTAMP('" + new Timestamp(ticket.getFlightDate().getTime().getTime()) + "','YYYY-MM-DD HH24:MI:SS.FF'), " +
-                        "TO_TIMESTAMP('" + new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()) + "','YYYY-MM-DD HH24:MI:SS.FF'))");*/
             }
             connection.commit();
         } catch (SQLException sqle) {
@@ -218,8 +175,8 @@ public class OracleDAO implements DAObject {
             throw new IllegalArgumentException("user can't be null");
         }
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement psUser = connection.prepareStatement(INSERT_USER);
-             PreparedStatement psTicket = connection.prepareStatement(INSERT_USERS_TICKETS)) {
+        try (PreparedStatement psUser = connection.prepareStatement("INSERT INTO USERS (LOGIN,PASSWORD,ROLE) VALUES (?,?,?)");
+             PreparedStatement psTicket = connection.prepareStatement("INSERT INTO USERS_TICKETS (USER_LOGIN,TICKET_ID) VALUES (?,?)")) {
             connection.setAutoCommit(false);
             psUser.setString(1, user.getLogin());
             psUser.setString(2, String.valueOf(user.getPassword()));
@@ -230,23 +187,14 @@ public class OracleDAO implements DAObject {
                 psTicket.setBigDecimal(2, new BigDecimal(it));
                 psTicket.executeUpdate();
             }
-
-            /*st.executeQuery("INSERT INTO USERS (LOGIN,PASSWORD,ROLE) VALUES ('" + user.getLogin() + "', '" + String.copyValueOf(user.getPassword()) +
-                    "', '" + user.role() + "')");
-            for (BigInteger it : user.getTickets()) {
-                st.executeQuery("INSERT INTO USERS_TICKETS (USER_LOGIN,TICKET_ID) VALUES ('" + user.getLogin() + "', " + it + ")");
-            }*/
             connection.commit();
         } catch (SQLException sqle) {
             logger.error(sqle);
             connection.rollback();
             throw sqle;
         } finally {
-            if (connection != null) {
-                connection.setAutoCommit(true);
-                JDBCPool.releaseConnection(connection);
-            }
-
+            connection.setAutoCommit(true);
+            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -256,11 +204,12 @@ public class OracleDAO implements DAObject {
         ResultSet rs;
         Connection connection = JDBCPool.getConnection();
         try (Statement st = connection.createStatement()) {
-            st.executeQuery(SELECT_ALL_AIRPLANES);
+            st.executeQuery("SELECT NAME, CAPACITY FROM AIRPLANE");
             rs = st.getResultSet();
             while (rs.next()) {
                 airplanes.add(new Airplane(rs.getString(1), rs.getInt(2)));
             }
+            // TODO: 13.01.2016
             rs.close();
         } catch (SQLException sql) {
             logger.error(sql);
@@ -277,17 +226,17 @@ public class OracleDAO implements DAObject {
         ResultSet rs;
         Connection connection = JDBCPool.getConnection();
         try (Statement st = connection.createStatement()) {
-            st.executeQuery(SELECT_ALL_CITIES);
+            st.executeQuery("SELECT NAME FROM CITIES");
             rs = st.getResultSet();
             while (rs.next()) {
                 cities.add(new City(rs.getString(1)));
             }
+            // TODO: 13.01.2016
             rs.close();
-        }catch (SQLException sql){
+        } catch (SQLException sql) {
             logger.error(sql);
             throw sql;
-        }
-        finally {
+        } finally {
             JDBCPool.releaseConnection(connection);
         }
         return cities;
@@ -299,17 +248,18 @@ public class OracleDAO implements DAObject {
         Connection connection = JDBCPool.getConnection();
         ResultSet rs;
         try (Statement st = connection.createStatement()) {
-            st.executeQuery(SELECT_ALL_FLIGHTS);
+            st.executeQuery("SELECT ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID,PRICE FROM FLIGHTS");
             rs = st.getResultSet();
             while (rs.next()) {
                 flights.add(new Flight(BigInteger.valueOf(rs.getLong(1)), rs.getString(2), rs.getString(3),
                         new Time(rs.getTimestamp(4).getTime()), new Time(rs.getTime(5).getTime()), rs.getString(6), rs.getDouble(7)));
             }
+            // TODO: 13.01.2016
             rs.close();
-        }catch (SQLException sqle){
+        } catch (SQLException sqle) {
             logger.error(sqle);
             throw sqle;
-        }finally {
+        } finally {
             JDBCPool.releaseConnection(connection);
         }
         return flights;
@@ -323,7 +273,7 @@ public class OracleDAO implements DAObject {
         ResultSet rs = null;
         Connection connection = JDBCPool.getConnection();
         try (Statement st = connection.createStatement()) {
-            st.executeQuery(SELECT_ALL_PASSENGERS);
+            st.executeQuery("SELECT ID,EMAIL,FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSPORT_NUMBER, CITIZENSHIP FROM PASSENGERS");
             rs = st.getResultSet();
             while (rs.next()) {
                 passengers.add(new Passenger(BigInteger.valueOf(rs.getLong(1)), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5),
@@ -346,7 +296,7 @@ public class OracleDAO implements DAObject {
         ResultSet rs = null;
         Connection connection = JDBCPool.getConnection();
         try (Statement st = connection.createStatement()) {
-            st.executeQuery(SELECT_ALL_TICKETS);
+            st.executeQuery("SELECT ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE FROM TICKETS");
             rs = st.getResultSet();
             while (rs.next()) {
                 Calendar flightDate = Calendar.getInstance();
@@ -402,10 +352,7 @@ public class OracleDAO implements DAObject {
         int result;
         ResultSet rs = null;
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(COUNT_NUMBER_OF_ACTUAL_TICKETS_IN_FLIGHT)) {
-            /*st.executeQuery("SELECT COUNT(*) FROM TICKETS WHERE FLIGHT_ID=" + flightId + " AND  " +
-                    "TRUNC(FLIGHT_DATE,'DD')=TO_DATE('" + dateFormat.format(flightDate) + "','YYYY-MM-DD') AND STATUS=0");
-            */
+        try (PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM TICKETS WHERE FLIGHT_ID=? AND TRUNC(FLIGHT_DATE,'DD')=TO_DATE(?,'YYYY-MM-DD') AND STATUS=0")) {
             ps.setBigDecimal(1, new BigDecimal(flightId));
             ps.setString(2, dateFormat.format(flightDate));
             ps.executeQuery();
@@ -453,7 +400,7 @@ public class OracleDAO implements DAObject {
         }
         ResultSet rs = null;
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(SELECT_AIRPLANE_BY_NAME)) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT NAME,CAPACITY FROM AIRPLANE WHERE NAME=?")) {
             ps.setString(1, airplane);
             ps.executeQuery();
             rs = ps.getResultSet();
@@ -476,7 +423,7 @@ public class OracleDAO implements DAObject {
         }
         ResultSet rs = null;
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(SELECT_CITY_BY_NAME)) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT NAME FROM CITIES WHERE NAME=?")) {
             ps.setString(1, city);
             ps.executeQuery();
             rs = ps.getResultSet();
@@ -499,7 +446,7 @@ public class OracleDAO implements DAObject {
         }
         ResultSet rs = null;
         Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement(SELECT_FLIGHT_BY_ID)) {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT ID, DEP_AIRPORT, ARR_AIRPORT, DEP_TIME, ARR_TIME, AIRPLANE_ID, PRICE FROM FLIGHTS WHERE ID=?")) {
             ps.setBigDecimal(1, new BigDecimal(id));
             ps.executeQuery();
             rs = ps.getResultSet();
@@ -633,7 +580,7 @@ public class OracleDAO implements DAObject {
     }
 
     @Override
-    // TODO: 11.01.2016
+    // TODO: 11.01.2016 do i need this method?
     public void updateCity(City city) throws SQLException {
         if (city == null) {
             throw new IllegalArgumentException("city can't be null");
