@@ -19,17 +19,16 @@ public class JDBCPool{
     private static final JDBCPool INSTANCE = new JDBCPool();
 
     // TODO: 11.01.2016 Wrap connection
-    private abstract static class UncloseableConnection implements Connection {
+    /*private    static class UncloseableConnection  implements Connection {
         @Override
         public void close(){
         }
-    }
+    }*/
 
     private JDBCPool() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             for (int i = 0; i <CONNECTIONS.remainingCapacity(); i++) {
-                logger.trace("adding connections..");
                 Connection connection = DriverManager.getConnection(getDBURL(), getDatabaseLogin(), String.valueOf(getDatabasePassword()));
                 CONNECTIONS.add(connection);
                 logger.trace("CONNECTIONS.add: "+connection);

@@ -18,7 +18,7 @@ public class Server {
 
 
         ServerSocket sSock = new ServerSocket(PORTNUMBER);
-        System.out.println("Listening");
+        logger.info("Listening");
         while (true) {
             logger.info("Waiting for client");
             Socket sock = sSock.accept();
