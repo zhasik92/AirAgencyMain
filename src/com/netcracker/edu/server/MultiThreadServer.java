@@ -15,7 +15,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.security.AccessControlException;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
@@ -55,24 +54,29 @@ public class MultiThreadServer implements Runnable {
                     logger.warn("Unsupported command");
                     out.println(-5);
                 } catch (IllegalArgumentException e) {
-                    logger.error(e.toString());
+                    logger.error(e);
                     out.println(1);
                 } catch (AccessControlException | AccessDeniedException ace) {
                     logger.warn(ace.toString());
                     out.println(1);
                 }
             }
-            cSocket.close();
         } catch (SocketException e) {
-            logger.error(e.toString());
+            logger.error(e);
             try {
                 DAOFactory.getDAObject().updateUser(SecurityContextHolder.getLoggedHolder());
-            } catch (SQLException sqle) {
-                logger.error(sqle);
+                SecurityContextHolder.removeUserFromSignedUsers();
+            } catch (Exception ex) {
+                logger.error(ex);
             }
-            SecurityContextHolder.removeUserFromSignedUsers();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                cSocket.close();
+            } catch (IOException e) {
+               logger.error(e);
+            }
         }
     }
 }

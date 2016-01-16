@@ -35,7 +35,7 @@ public class IdGenerator {
                         " FROM FLIGHTS,PASSENGERS,TICKETS UNION select MAX(TICKETS.ID) FROM FLIGHTS,PASSENGERS,TICKETS)");
                 rs=st.getResultSet();
                 if(rs.next()){
-                    idCounter= rs.getBigDecimal(1).toBigInteger();
+                    idCounter= rs.getBigDecimal(1)==null?BigInteger.ONE:rs.getBigDecimal(1).toBigInteger();
                 }
                 rs.close();
             }catch (SQLException e){

@@ -32,16 +32,14 @@ public class OracleDAO implements DAObject {
         if (airplane == null) {
             throw new IllegalArgumentException("airplane can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO AIRPLANE (NAME, CAPACITY) VALUES (?,?)")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO AIRPLANE (NAME, CAPACITY) VALUES (?,?)")) {
             ps.setString(1, airplane.getName());
             ps.setInt(2, airplane.getCapacity());
             ps.executeUpdate();
         } catch (SQLException sql) {
             logger.error(sql);
             throw sql;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -50,15 +48,13 @@ public class OracleDAO implements DAObject {
         if (city == null) {
             throw new IllegalArgumentException("city can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement st = connection.prepareStatement("INSERT INTO CITIES (NAME) VALUES(?)")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement st = connection.prepareStatement("INSERT INTO CITIES (NAME) VALUES(?)")) {
             st.setString(1, city.getName());
             st.executeUpdate();
         } catch (SQLException sqle) {
             logger.error(sqle);
             throw sqle;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -67,8 +63,8 @@ public class OracleDAO implements DAObject {
         if (flight == null) {
             throw new IllegalArgumentException("flight can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO FLIGHTS (ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID, PRICE) VALUES (?,?,?,TO_TIMESTAMP(?,'HH24:MI:SS'),TO_TIMESTAMP(?,'HH24:MI:SS'),?,?)")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO FLIGHTS (ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID, PRICE) VALUES (?,?,?,TO_TIMESTAMP(?,'HH24:MI:SS'),TO_TIMESTAMP(?,'HH24:MI:SS'),?,?)")) {
             ps.setBigDecimal(1, new BigDecimal(flight.getId()));
             ps.setString(2, flight.getDepartureAirportName());
             ps.setString(3, flight.getArrivalAirportName());
@@ -80,8 +76,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException sqle) {
             logger.error(sqle);
             throw sqle;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -90,8 +84,8 @@ public class OracleDAO implements DAObject {
         if (passenger == null) {
             throw new IllegalArgumentException("passenger can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO PASSENGERS (ID,EMAIL,FIRST_NAME,LAST_NAME,DATE_OF_BIRTH,PASSPORT_NUMBER,CITIZENSHIP) VALUES(?,?,?,?,TO_DATE(?,'YYYY-MM-DD'),?,?)")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO PASSENGERS (ID,EMAIL,FIRST_NAME,LAST_NAME,DATE_OF_BIRTH,PASSPORT_NUMBER,CITIZENSHIP) VALUES(?,?,?,?,TO_DATE(?,'YYYY-MM-DD'),?,?)")) {
             ps.setBigDecimal(1, new BigDecimal(passenger.getId()));
             ps.setString(2, passenger.getEmail());
             ps.setString(3, passenger.getFirstName());
@@ -103,8 +97,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException sqle) {
             logger.error(sqle);
             throw sqle;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -113,8 +105,8 @@ public class OracleDAO implements DAObject {
         if (ticket == null) {
             throw new IllegalArgumentException("ticket can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES(?,?,?,?,TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'),TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'))")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES(?,?,?,?,TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'),TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'))")) {
             ps.setBigDecimal(1, new BigDecimal(ticket.getId()));
             ps.setBigDecimal(2, new BigDecimal(ticket.getPassengerId()));
             ps.setBigDecimal(3, new BigDecimal(ticket.getFlightId()));
@@ -125,8 +117,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException sqle) {
             logger.error(sqle);
             throw sqle;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -135,28 +125,28 @@ public class OracleDAO implements DAObject {
         if (tickets == null) {
             throw new IllegalArgumentException("tickets can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES(?,?,?,?,TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'),TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'))")) {
-            connection.setAutoCommit(false);
-
-            for (Ticket ticket : tickets) {
-                ps.setBigDecimal(1, new BigDecimal(ticket.getId()));
-                ps.setBigDecimal(2, new BigDecimal(ticket.getPassengerId()));
-                ps.setBigDecimal(3, new BigDecimal(ticket.getFlightId()));
-                ps.setInt(4, (ticket.isCanceled() ? 1 : 0));
-                // TODO: 10.01.2016
-                ps.setString(5, new Timestamp(ticket.getFlightDate().getTime().getTime()).toString());
-                ps.setString(6, new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()).toString());
-                ps.executeUpdate();
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO TICKETS (ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE) VALUES(?,?,?,?,TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'),TO_TIMESTAMP(?,'YYYY-MM-DD HH24:MI:SS.FF'))")) {
+            try {
+                connection.setAutoCommit(false);
+                for (Ticket ticket : tickets) {
+                    ps.setBigDecimal(1, new BigDecimal(ticket.getId()));
+                    ps.setBigDecimal(2, new BigDecimal(ticket.getPassengerId()));
+                    ps.setBigDecimal(3, new BigDecimal(ticket.getFlightId()));
+                    ps.setInt(4, (ticket.isCanceled() ? 1 : 0));
+                    // TODO: 10.01.2016
+                    ps.setString(5, new Timestamp(ticket.getFlightDate().getTime().getTime()).toString());
+                    ps.setString(6, new Timestamp(ticket.getTicketBoughtDate().getTime().getTime()).toString());
+                    ps.executeUpdate();
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                logger.error(e);
+                connection.rollback();
+                throw e;
+            } finally {
+                connection.setAutoCommit(true);
             }
-            connection.commit();
-        } catch (SQLException sqle) {
-            logger.error(sqle);
-            connection.rollback();
-            throw sqle;
-        } finally {
-            connection.setAutoCommit(true);
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -165,35 +155,36 @@ public class OracleDAO implements DAObject {
         if (user == null) {
             throw new IllegalArgumentException("user can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement psUser = connection.prepareStatement("INSERT INTO USERS (LOGIN,PASSWORD,ROLE) VALUES (?,?,?)");
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement psUser = connection.prepareStatement("INSERT INTO USERS (LOGIN,PASSWORD,ROLE) VALUES (?,?,?)");
              PreparedStatement psTicket = connection.prepareStatement("INSERT INTO USERS_TICKETS (USER_LOGIN,TICKET_ID) VALUES (?,?)")) {
-            connection.setAutoCommit(false);
-            psUser.setString(1, user.getLogin());
-            psUser.setString(2, String.valueOf(user.getPassword()));
-            psUser.setString(3, user.role().toString());
-            psUser.executeUpdate();
-            for (BigInteger it : user.getTickets()) {
-                psTicket.setString(1, user.getLogin());
-                psTicket.setBigDecimal(2, new BigDecimal(it));
-                psTicket.executeUpdate();
+            try {
+                connection.setAutoCommit(false);
+                psUser.setString(1, user.getLogin());
+                psUser.setString(2, String.valueOf(user.getPassword()));
+                psUser.setString(3, user.role().toString());
+                psUser.executeUpdate();
+                for (BigInteger it : user.getTickets()) {
+                    psTicket.setString(1, user.getLogin());
+                    psTicket.setBigDecimal(2, new BigDecimal(it));
+                    psTicket.executeUpdate();
+                }
+                connection.commit();
+            } catch (SQLException sqle) {
+                logger.error(sqle);
+                connection.rollback();
+                throw sqle;
+            } finally {
+                connection.setAutoCommit(true);
             }
-            connection.commit();
-        } catch (SQLException sqle) {
-            logger.error(sqle);
-            connection.rollback();
-            throw sqle;
-        } finally {
-            connection.setAutoCommit(true);
-            JDBCPool.releaseConnection(connection);
         }
     }
 
     @Override
     public Collection<Airplane> getAllAirplanes() throws SQLException {
         HashSet<Airplane> airplanes = new HashSet<>();
-        Connection connection = JDBCPool.getConnection();
-        try (Statement st = connection.createStatement()) {
+        try (Connection connection = JDBCPool.getConnection();
+             Statement st = connection.createStatement()) {
             st.executeQuery("SELECT NAME, CAPACITY FROM AIRPLANE");
             try (ResultSet rs = st.getResultSet()) {
                 while (rs.next()) {
@@ -204,16 +195,14 @@ public class OracleDAO implements DAObject {
         } catch (SQLException sql) {
             logger.error(sql);
             throw sql;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
     @Override
     public Collection<City> getAllCities() throws SQLException {
         HashSet<City> cities = new HashSet<>();
-        Connection connection = JDBCPool.getConnection();
-        try (Statement st = connection.createStatement()) {
+        try (Connection connection = JDBCPool.getConnection();
+             Statement st = connection.createStatement()) {
             st.executeQuery("SELECT NAME FROM CITIES");
             try (ResultSet rs = st.getResultSet()) {
                 while (rs.next()) {
@@ -224,16 +213,14 @@ public class OracleDAO implements DAObject {
         } catch (SQLException sql) {
             logger.error(sql);
             throw sql;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
     @Override
     public Collection<Flight> getAllFlights() throws SQLException {
         HashSet<Flight> flights = new HashSet<>();
-        Connection connection = JDBCPool.getConnection();
-        try (Statement st = connection.createStatement()) {
+        try (Connection connection = JDBCPool.getConnection();
+             Statement st = connection.createStatement()) {
             st.executeQuery("SELECT ID,DEP_AIRPORT,ARR_AIRPORT,DEP_TIME,ARR_TIME,AIRPLANE_ID,PRICE FROM FLIGHTS");
             try (ResultSet rs = st.getResultSet()) {
                 while (rs.next()) {
@@ -245,10 +232,7 @@ public class OracleDAO implements DAObject {
         } catch (SQLException sqle) {
             logger.error(sqle);
             throw sqle;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
-
     }
 
     @Override
@@ -256,8 +240,8 @@ public class OracleDAO implements DAObject {
     // TODO: 11.01.2016 do i need this method?
     public Collection<Passenger> getAllPassengers() throws SQLException {
         HashSet<Passenger> passengers = new HashSet<>();
-        Connection connection = JDBCPool.getConnection();
-        try (Statement st = connection.createStatement()) {
+        try (Connection connection = JDBCPool.getConnection();
+             Statement st = connection.createStatement()) {
             st.executeQuery("SELECT ID,EMAIL,FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSPORT_NUMBER, CITIZENSHIP FROM PASSENGERS");
             try (ResultSet rs = st.getResultSet()) {
                 while (rs.next()) {
@@ -269,8 +253,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -279,8 +261,8 @@ public class OracleDAO implements DAObject {
     // TODO: 11.01.2016 do i need this method?
     public Collection<Ticket> getAllTickets() throws SQLException {
         HashSet<Ticket> tickets = new HashSet<>();
-        Connection connection = JDBCPool.getConnection();
-        try (Statement st = connection.createStatement()) {
+        try (Connection connection = JDBCPool.getConnection();
+             Statement st = connection.createStatement()) {
             st.executeQuery("SELECT ID,PASSENGER_ID,FLIGHT_ID,STATUS,FLIGHT_DATE,TICKET_BOUGHT_DATE FROM TICKETS");
             try (ResultSet rs = st.getResultSet()) {
                 while (rs.next()) {
@@ -296,15 +278,14 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
     @Override
     //tested
     // TODO: 11.01.2016 do i need this method?
-    public Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId, Calendar flightDate) throws SQLException {
+    public Collection<Ticket> getAllCanceledTicketsInFlight(BigInteger flightId, Calendar flightDate) throws
+            SQLException {
         /*HashSet<Ticket> tickets = new HashSet<>();
         Statement st = null;
         ResultSet rs = null;
@@ -336,8 +317,8 @@ public class OracleDAO implements DAObject {
     @Override
     public int getNumberOfSoldTicketsInFlight(BigInteger flightId, Calendar flightDate) throws SQLException {
         int result;
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM TICKETS WHERE FLIGHT_ID=? AND TRUNC(FLIGHT_DATE,'DD')=TO_DATE(?,'YYYY-MM-DD') AND STATUS=0")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM TICKETS WHERE FLIGHT_ID=? AND TRUNC(FLIGHT_DATE,'DD')=TO_DATE(?,'YYYY-MM-DD') AND STATUS=0")) {
             ps.setBigDecimal(1, new BigDecimal(flightId));
             ps.setString(2, dateFormat.format(flightDate));
             ps.executeQuery();
@@ -349,8 +330,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -384,8 +363,8 @@ public class OracleDAO implements DAObject {
         if (airplane == null || airplane.isEmpty()) {
             throw new IllegalArgumentException("airplane can't be null or empty");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("SELECT NAME,CAPACITY FROM AIRPLANE WHERE NAME=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT NAME,CAPACITY FROM AIRPLANE WHERE NAME=?")) {
             ps.setString(1, airplane);
             ps.executeQuery();
             try (ResultSet rs = ps.getResultSet()) {
@@ -397,8 +376,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -407,8 +384,8 @@ public class OracleDAO implements DAObject {
         if (city == null || city.isEmpty()) {
             throw new IllegalArgumentException("city can't be null or empty");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("SELECT NAME FROM CITIES WHERE NAME=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT NAME FROM CITIES WHERE NAME=?")) {
             ps.setString(1, city);
             ps.executeQuery();
             try (ResultSet rs = ps.getResultSet()) {
@@ -420,8 +397,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -430,8 +405,8 @@ public class OracleDAO implements DAObject {
         if (id == null) {
             throw new IllegalArgumentException("id can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("SELECT ID, DEP_AIRPORT, ARR_AIRPORT, DEP_TIME, ARR_TIME, AIRPLANE_ID, PRICE FROM FLIGHTS WHERE ID=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT ID, DEP_AIRPORT, ARR_AIRPORT, DEP_TIME, ARR_TIME, AIRPLANE_ID, PRICE FROM FLIGHTS WHERE ID=?")) {
             ps.setBigDecimal(1, new BigDecimal(id));
             ps.executeQuery();
             try (ResultSet rs = ps.getResultSet()) {
@@ -444,8 +419,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -454,9 +427,8 @@ public class OracleDAO implements DAObject {
         if (id == null) {
             throw new IllegalArgumentException("id can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        // TODO: 11.01.2016
-        try (PreparedStatement ps = connection.prepareStatement("SELECT ID,EMAIL, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSPORT_NUMBER, CITIZENSHIP FROM PASSENGERS WHERE ID=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT ID,EMAIL, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSPORT_NUMBER, CITIZENSHIP FROM PASSENGERS WHERE ID=?")) {
             ps.setBigDecimal(1, new BigDecimal(id));
             ps.executeQuery();
             try (ResultSet rs = ps.getResultSet()) {
@@ -469,18 +441,17 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
     @Override
-    public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) throws SQLException {
+    public Passenger findPassengerByPassportNumberAndCitizenship(String passportNumber, String citizenship) throws
+            SQLException {
         if (passportNumber == null || citizenship == null || passportNumber.isEmpty() || citizenship.isEmpty()) {
             throw new IllegalArgumentException("passportNumber/citizenship can't be null or empty");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("SELECT ID,EMAIL, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSPORT_NUMBER, CITIZENSHIP FROM PASSENGERS WHERE PASSPORT_NUMBER=? AND CITIZENSHIP=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT ID,EMAIL, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, PASSPORT_NUMBER, CITIZENSHIP FROM PASSENGERS WHERE PASSPORT_NUMBER=? AND CITIZENSHIP=?")) {
             ps.setString(1, passportNumber);
             ps.setString(2, citizenship);
             ps.executeQuery();
@@ -494,8 +465,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -504,8 +473,8 @@ public class OracleDAO implements DAObject {
         if (id == null) {
             throw new IllegalArgumentException("id can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("SELECT ID, PASSENGER_ID,FLIGHT_ID,STATUS, FLIGHT_DATE, TICKET_BOUGHT_DATE FROM TICKETS WHERE ID=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT ID, PASSENGER_ID,FLIGHT_ID,STATUS, FLIGHT_DATE, TICKET_BOUGHT_DATE FROM TICKETS WHERE ID=?")) {
             ps.setBigDecimal(1, new BigDecimal(id));
             ps.executeQuery();
             try (ResultSet rs = ps.getResultSet()) {
@@ -522,8 +491,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -532,8 +499,8 @@ public class OracleDAO implements DAObject {
         if (login == null || login.isEmpty()) {
             throw new IllegalArgumentException("login can't be null or empty");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("SELECT LOGIN, PASSWORD, ROLE FROM USERS WHERE LOGIN=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT LOGIN, PASSWORD, ROLE FROM USERS WHERE LOGIN=?")) {
             ps.setString(1, login);
             ps.executeQuery();
             try (ResultSet rs = ps.getResultSet()) {
@@ -545,8 +512,6 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -555,16 +520,14 @@ public class OracleDAO implements DAObject {
         if (airplane == null) {
             throw new IllegalArgumentException("airplane can't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("UPDATE AIRPLANE SET CAPACITY= ? WHERE NAME=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("UPDATE AIRPLANE SET CAPACITY= ? WHERE NAME=?")) {
             ps.setInt(1, airplane.getCapacity());
             ps.setString(2, airplane.getName());
             ps.executeUpdate();
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
@@ -602,8 +565,8 @@ public class OracleDAO implements DAObject {
         if (passenger == null) {
             throw new IllegalArgumentException("passenger ca't be null");
         }
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("UPDATE PASSENGERS SET EMAIL=?, FIRST_NAME=?, LAST_NAME=?, DATE_OF_BIRTH=?, PASSPORT_NUMBER=?, CITIZENSHIP=? WHERE ID=?")) {
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("UPDATE PASSENGERS SET EMAIL=?, FIRST_NAME=?, LAST_NAME=?, DATE_OF_BIRTH=?, PASSPORT_NUMBER=?, CITIZENSHIP=? WHERE ID=?")) {
             ps.setString(1, passenger.getEmail());
             ps.setString(2, passenger.getFirstName());
             ps.setString(3, passenger.getLastName());
@@ -615,19 +578,20 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
     @Override
     public void updateTicket(Ticket ticket) throws SQLException {
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("UPDATE TICKETS SET PASSENGER_ID=?," +
-                " FLIGHT_ID=?," +
-                " STATUS=?," +
-                " FLIGHT_DATE=TO_TIMESTAMP(?,'YYYY-MM-DD')," +
-                " TICKET_BOUGHT_DATE=TO_TIMESTAMP(?,'YYYY-MM-DD') WHERE ID=?")) {
+        if (ticket == null) {
+            throw new IllegalArgumentException("ticket can't be null");
+        }
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("UPDATE TICKETS SET PASSENGER_ID=?," +
+                     " FLIGHT_ID=?," +
+                     " STATUS=?," +
+                     " FLIGHT_DATE=TO_TIMESTAMP(?,'YYYY-MM-DD')," +
+                     " TICKET_BOUGHT_DATE=TO_TIMESTAMP(?,'YYYY-MM-DD') WHERE ID=?")) {
             ps.setBigDecimal(1, new BigDecimal(ticket.getPassengerId()));
             ps.setBigDecimal(2, new BigDecimal(ticket.getFlightId()));
             ps.setInt(3, (ticket.isCanceled() ? 1 : 0));
@@ -638,33 +602,35 @@ public class OracleDAO implements DAObject {
         } catch (SQLException e) {
             logger.error(e);
             throw e;
-        } finally {
-            JDBCPool.releaseConnection(connection);
         }
     }
 
     @Override
     public void updateUser(User user) throws SQLException {
-        Connection connection = JDBCPool.getConnection();
-        try (PreparedStatement ps = connection.prepareStatement("UPDATE USERS SET PASSWORD=?, ROLE=? WHERE LOGIN=?");
+        if (user == null) {
+            throw new IllegalArgumentException("user can't be null");
+        }
+        try (Connection connection = JDBCPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement("UPDATE USERS SET PASSWORD=?, ROLE=? WHERE LOGIN=?");
              CallableStatement pc = connection.prepareCall("call if_empty_USERS_TICKETS(?,?)")) {
-            connection.setAutoCommit(false);
-            ps.setString(1, String.valueOf(user.getPassword()));
-            ps.setString(2, user.role().toString());
-            ps.setString(3, user.getLogin());
-            for (BigInteger it : user.getTickets()) {
-                pc.setBigDecimal(1, new BigDecimal(it));
-                pc.setString(2, user.getLogin());
-                pc.executeUpdate();
+            try {
+                connection.setAutoCommit(false);
+                ps.setString(1, String.valueOf(user.getPassword()));
+                ps.setString(2, user.role().toString());
+                ps.setString(3, user.getLogin());
+                for (BigInteger it : user.getTickets()) {
+                    pc.setBigDecimal(1, new BigDecimal(it));
+                    pc.setString(2, user.getLogin());
+                    pc.executeUpdate();
+                }
+                connection.commit();
+            } catch (SQLException sqle) {
+                logger.error(sqle);
+                connection.rollback();
+                logger.error("connection rolled back");
+            } finally {
+                connection.setAutoCommit(true);
             }
-            connection.commit();
-        } catch (SQLException sqle) {
-            logger.error(sqle);
-            connection.rollback();
-            logger.error("connection rolled back");
-        } finally {
-            connection.setAutoCommit(true);
-            JDBCPool.releaseConnection(connection);
         }
     }
 }
